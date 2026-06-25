@@ -1,0 +1,702 @@
+// ===== Portab - New Tab Page =====
+
+let pinnedUrls = new Set();
+let pinnedData = new Map();
+let cachedHistory = [];
+
+// ===== DOM refs =====
+const searchInput = document.getElementById('searchInput');
+const pinnedGrid  = document.getElementById('pinnedGrid');
+const historyGrid = document.getElementById('historyGrid');
+
+// ===== Init =====
+(async function init() {
+  await loadSettings();
+  initSettings();
+  await loadTheme();
+  await loadGrid();
+  await loadHistoryRange();
+  
+  // Load cached wallpaper (apply immediately, fetch bing in background)
+  await loadWallpaperCached();
+  
+  await loadSeedColor();
+  await loadEngines();
+  await loadClock();
+  await renderAll();
+
+  // Fade in — all content is ready
+  requestAnimationFrame(() => {
+    document.body.classList.add('ready');
+  });
+
+  // Fetch bing wallpaper update in background
+  loadWallpaperBingUpdate();
+
+  // Engine dropdown
+  const engineBtn = document.getElementById('engineBtn');
+  const engineDropdown = document.getElementById('engineDropdown');
+  if (engineBtn) {
+    engineBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      rebuildEngineDropdown();
+      engineDropdown.classList.toggle('hidden');
+    });
+  }
+  document.addEventListener('click', () => {
+    if (engineDropdown && !engineDropdown.classList.contains('hidden')) {
+      engineDropdown.classList.add('hidden');
+      requestAnimationFrame(() => {
+        if (document.activeElement !== searchInput) searchInput.focus();
+      });
+    }
+  });
+
+  // Auto-animate grid changes (FLIP: smooth add/remove/move)
+  autoAnimate(pinnedGrid, { duration: 200 });
+  autoAnimate(historyGrid, { duration: 200 });
+
+  // Search box focus state
+  const searchBox = document.querySelector('.search-box');
+  const searchPlaceholder = document.getElementById('searchPlaceholder');
+  if (searchInput.value) {
+    searchPlaceholder.classList.add('has-text');
+    searchPlaceholder.textContent = searchInput.value;
+  }
+  searchInput.addEventListener('focus', () => {
+    searchBox.classList.add('focused');
+    document.body.classList.add('search-focused');
+    // Show suggestions if input already has content
+    if (searchInput.value.trim().length >= 2) {
+      searchInput.dispatchEvent(new Event('input'));
+    }
+  });
+  searchInput.addEventListener('blur', (e) => {
+    if (e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.search-box')) return;
+    searchBox.classList.remove('focused');
+    document.body.classList.remove('search-focused');
+    if (!searchInput.value) searchPlaceholder.textContent = '搜索或输入网址…';
+  });
+  searchInput.addEventListener('input', () => {
+    searchPlaceholder.textContent = searchInput.value || '搜索或输入网址…';
+    searchPlaceholder.classList.toggle('has-text', !!searchInput.value);
+  });
+
+  // Search button click
+  // Search button
+  document.getElementById('searchBtn').addEventListener('click', () => {
+    searchInput.focus();
+    const query = searchInput.value.trim();
+    if (!query) return;
+    const allEngines = getAllEngines();
+    const eng = allEngines.find(e => e.id === currentEngine) || allEngines[0];
+    if (eng) window.location.href = eng.url + encodeURIComponent(query);
+  });
+  // Prevent blur when clicking search icon
+  document.getElementById('searchBtn').addEventListener('mousedown', (e) => e.preventDefault());
+
+  // Context menu
+  document.querySelectorAll('.grid').forEach(grid => {
+    grid.addEventListener('contextmenu', (e) => {
+      const tile = e.target.closest('.tile');
+      if (!tile) return;
+      e.preventDefault();
+      e.stopPropagation();
+      showCtxMenu(e.clientX, e.clientY, tile);
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper') && !e.target.closest('.suggest-dropdown')) searchInput.blur();
+    const m = document.getElementById('ctxMenu');
+    if (m) m.classList.add('hidden');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const m = document.getElementById('ctxMenu');
+      if (m) m.classList.add('hidden');
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper') && !e.target.closest('.suggest-dropdown')) searchInput.blur();
+  });
+
+  // ===== Clock =====
+  function updateClockDisplay() {
+    var now = new Date();
+    var h = now.getHours();
+    var m = String(now.getMinutes()).padStart(2, '0');
+    var timeStr;
+    if (window._clock24h !== false) {
+      timeStr = String(h).padStart(2, '0') + ':' + m;
+    } else {
+      var ampm = h >= 12 ? 'PM' : 'AM';
+      var h12 = h % 12 || 12;
+      timeStr = h12 + ':' + m + ' ' + ampm;
+    }
+    document.getElementById('clockTime').textContent = timeStr;
+    document.getElementById('clockDate').textContent = 
+      now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 星期' +
+      ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
+  }
+  updateClockDisplay();
+  setInterval(updateClockDisplay, 10000);
+
+  // Right-click clock → toggle popup
+  const clockPopup = document.getElementById('clockPopup');
+  // Ensure popup starts hidden
+  clockPopup.classList.add('hidden');
+  document.getElementById('clock').addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    clockPopup.classList.toggle('hidden');
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#clock')) clockPopup.classList.add('hidden');
+  });
+
+  // If input gained focus before we added listeners, fix it
+  if (document.activeElement === searchInput) {
+    searchBox.classList.add('focused');
+    document.body.classList.add('search-focused');
+    if (searchInput.value.trim().length >= 2) {
+      searchInput.dispatchEvent(new Event('input'));
+    }
+  }
+  // Also account for back-navigation where focus is restored asynchronously
+  setTimeout(() => {
+    if (document.activeElement === searchInput) {
+      searchBox.classList.add('focused');
+      document.body.classList.add('search-focused');
+      if (searchInput.value.trim().length >= 2) {
+        searchInput.dispatchEvent(new Event('input'));
+      }
+    }
+  }, 100);
+})();
+
+// ===== Settings =====
+async function loadSettings() {
+  const result = await chrome.storage.local.get(['engine', 'pinned', 'ignoredUrls']);
+  if (result.ignoredUrls) ignoredUrls = result.ignoredUrls;
+
+  if (result.engine && typeof getAllEngines === 'function') {
+    const all = getAllEngines();
+    if (all.find(e => e.id === result.engine)) currentEngine = result.engine;
+  }
+
+  if (result.pinned && Array.isArray(result.pinned)) {
+    pinnedData.clear();
+    pinnedUrls.clear();
+    for (const item of result.pinned) {
+      pinnedUrls.add(item.url);
+      // Backfill displayTitle/bestPath for older stored items
+      if (!item.bestPath) {
+        try { item.bestPath = new URL(item.url).pathname; } catch(e) { item.bestPath = '/'; }
+      }
+      if (!item.displayTitle && item.title) {
+        // Compute displayTitle using qualifedTitle
+        const allEngines = getAllEngines();
+        const base = item.hostname.replace(/^www\./, '');
+        const seg = item.bestPath.replace(/\/$/, '').split('/').pop() || '';
+        const hasPath = seg && seg.length > 0 && !/\.(html?|php|jsp)$/.test(seg);
+        const isGeneric = !item.title || item.title === item.hostname || item.title === base ||
+          (item.hostname && item.hostname.startsWith(item.title + '.')) ||
+          (item.title && item.title.toLowerCase() === base.split('.')[0]);
+        if (isGeneric && !hasPath) item.displayTitle = base;
+        else if (isGeneric && hasPath) item.displayTitle = base + '/' + seg;
+        else {
+          let t = item.title.replace(/\s*[-–|].*$/, '').trim();
+          if (hasPath && t.length > 22) t = t.slice(0, 20) + '…';
+          item.displayTitle = hasPath ? t + ' /' + seg : t;
+        }
+      }
+      pinnedData.set(item.url, item);
+    }
+  }
+
+  updateEngineUI();
+}
+async function savePinned() {
+  const arr = Array.from(pinnedData.values());
+  await chrome.storage.local.set({ pinned: arr });
+}
+
+// ===== Search =====
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    // If a suggestion is selected, navigate to its URL
+    if (sugUrl && sugIdx >= 0) {
+      window.location.href = sugUrl;
+      return;
+    }
+
+    if (/^(https?:\/\/)?[\w.-]+\.\w{2,}(\/\S*)?$/.test(query)) {
+      const url = query.startsWith('http') ? query : 'https://' + query;
+      window.location.href = url;
+    } else {
+      const allEngines = getAllEngines();
+      const eng = allEngines.find(e => e.id === currentEngine) || allEngines[0];
+      if (eng) window.location.href = eng.url + encodeURIComponent(query);
+    }
+  }
+});
+
+// Search suggestions — from browser history
+const suggestDropdown = document.createElement('div');
+suggestDropdown.className = 'suggest-dropdown hidden';
+document.querySelector('.search-wrapper').appendChild(suggestDropdown);
+
+let suggestTimer;
+searchInput.addEventListener('input', () => {
+  clearTimeout(suggestTimer);
+  suggestDropdown.classList.add('hidden');
+  sugUrl = '';
+  const q = searchInput.value.trim();
+  if (q.length < 2) return;
+  suggestTimer = setTimeout(async () => {
+    try {
+      let items = [];
+      // Bing suggestion API — accessible in China, works for all engines
+      try {
+        const resp = await fetch('https://api.bing.com/osjson.aspx?query=' + encodeURIComponent(q));
+        const data = await resp.json();
+        items = (data[1] || []).map(s => ({
+          title: s,
+          url: (() => {
+            const allEngines = getAllEngines();
+            const eng = allEngines.find(e => e.id === currentEngine) || allEngines[0];
+            return eng ? eng.url + encodeURIComponent(s) : 'https://www.bing.com/search?q=' + encodeURIComponent(s);
+          })(),
+        }));
+      } catch(e) { /* fall through */ }
+      
+      // Fallback to local history
+      if (items.length === 0) {
+        const results = await chrome.history.search({ text: q, maxResults: 6, startTime: 0 });
+        items = results.filter(it => it.title || it.url).map(it => ({
+          title: it.title || it.url,
+          url: it.url,
+        }));
+      }
+      
+      suggestDropdown.innerHTML = '';
+      for (const item of items) {
+        if (!item.title) continue;
+        const div = document.createElement('div');
+        div.className = 'suggest-item';
+        div.dataset.url = item.url;
+        div.innerHTML = '<span class="suggest-title">' + escapeHtml(item.title.slice(0, 80)) + '</span><span class="suggest-url">' + escapeHtml((item.url || '').slice(0, 60)) + '</span>';
+        div.addEventListener('mousedown', (e) => { e.preventDefault(); window.location.href = item.url; });
+        suggestDropdown.appendChild(div);
+      }
+      
+      if (suggestDropdown.children.length > 0) suggestDropdown.classList.remove('hidden');
+    } catch(e) { /* ignore */ }
+  }, 150);
+});
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); moveSugg(1); }
+  if (e.key === 'ArrowUp') { e.preventDefault(); moveSugg(-1); }
+  if (e.key === 'Escape') suggestDropdown.classList.add('hidden');
+});
+searchInput.addEventListener('blur', () => setTimeout(() => suggestDropdown.classList.add('hidden'), 0));
+
+let sugIdx = -1, sugUrl = '';
+function moveSugg(dir) {
+  const items = suggestDropdown.children;
+  if (items.length === 0) return;
+  if (sugIdx >= 0) items[sugIdx].classList.remove('active');
+  sugIdx = Math.max(0, Math.min(items.length - 1, sugIdx + dir));
+  items[sugIdx].classList.add('active');
+  sugUrl = items[sugIdx].dataset.url || '';
+  const txt = items[sugIdx].querySelector('.suggest-title')?.textContent || '';
+  searchInput.value = txt;
+  // Update placeholder span since input text is transparent
+  const ph = document.getElementById('searchPlaceholder');
+  if (ph) { ph.textContent = txt; ph.classList.add('has-text'); }
+}
+function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ===== Render =====
+async function renderAll() {
+  const historyItems = await getTopHistory();
+  renderPinned();
+  renderHistory(historyItems);
+}
+
+// ===== History API =====
+async function getTopHistory() {
+  try {
+    const startTime = historyRange > 0 ? Date.now() - historyRange * 24 * 60 * 60 * 1000 : 0;
+    const results = await chrome.history.search({
+      text: '',
+      maxResults: 500,
+      startTime,
+    });
+
+    const siteMap = new Map();
+
+    for (const item of results) {
+      try {
+        const urlObj = new URL(item.url);
+        // Group by origin + pathname (different pages = different entries)
+        const key = urlObj.origin + urlObj.pathname;
+
+        if (!siteMap.has(key)) {
+          siteMap.set(key, {
+            url: urlObj.origin + urlObj.pathname,
+            title: item.title || urlObj.hostname,
+            visitCount: 0,
+            hostname: urlObj.hostname,
+            favicon: faviconUrl(urlObj.hostname),
+            bestPath: urlObj.pathname,
+          });
+        }
+        const entry = siteMap.get(key);
+        entry.visitCount += (item.visitCount || 1);
+        if (item.title && item.title.length > entry.title.length) {
+          entry.title = item.title;
+        }
+      } catch (e) { /* skip */ }
+    }
+
+    const sorted = Array.from(siteMap.values())
+      .sort((a, b) => b.visitCount - a.visitCount)
+      .slice(0, 100); // cache for gap filling
+
+    // Duplicate detection + cache
+    const nameCount = new Map();
+    for (const item of sorted) {
+      const base = simpleTitle(item.title, item.hostname);
+      nameCount.set(base, (nameCount.get(base) || 0) + 1);
+    }
+    for (const item of sorted) {
+      const base = simpleTitle(item.title, item.hostname);
+      if (nameCount.get(base) > 1) {
+        item.displayTitle = qualifedTitle(item.title, item.hostname, item.bestPath);
+      } else {
+        item.displayTitle = base;
+      }
+    }
+
+    cachedHistory = sorted;
+    return sorted;
+  } catch (err) {
+    console.error('Failed to get history:', err);
+    return [];
+  }
+}
+
+// ===== Render Pinned =====
+function renderPinned() {
+  pinnedGrid.innerHTML = '';
+  const items = Array.from(pinnedData.values());
+  const section = document.getElementById('shortcuts');
+  const emptyEl = document.getElementById('pinnedEmpty');
+
+  if (items.length === 0) {
+    emptyEl.classList.remove('hidden-empty');
+    section.classList.add('is-empty');
+    return;
+  }
+
+  emptyEl.classList.add('hidden-empty');
+  section.classList.remove('is-empty');
+  for (const item of items) {
+    pinnedGrid.appendChild(createTile(item, true));
+  }
+}
+
+// ===== Render History =====
+function renderHistory(historyItems) {
+  historyGrid.innerHTML = '';
+
+  if (historyItems.length === 0) {
+    historyGrid.innerHTML = '<div class="empty">暂无历史记录</div>';
+    return;
+  }
+
+  // Limit visible items and filter ignored
+  const maxItems = gridRows >= 6 ? Infinity : gridCols * gridRows;
+  let shown = 0;
+
+  for (const item of historyItems) {
+    if (pinnedUrls.has(item.url)) continue;
+    if (ignoredUrls.some(u => item.url.startsWith(u) || item.hostname === u)) continue;
+    if (shown >= maxItems) break;
+    historyGrid.appendChild(createTile(item, false));
+    shown++;
+  }
+}
+
+// ===== Create Tile =====
+function createTile(item, isPinned) {
+  const tile = document.createElement('a');
+  tile.className = 'tile' + (isPinned ? ' pinned' : '');
+  tile.href = item.url;
+  tile.title = (item.title || '') + '\n' + item.url + (item.visitCount ? `\n访问 ${formatCount(item.visitCount)} 次` : '');
+  tile.dataset.visits = item.visitCount || 0;
+
+  const iconDiv = document.createElement('div');
+  iconDiv.className = 'tile-icon';
+
+  // Try cached favicon first; fall back to live resolution
+  const hostname = item.hostname;
+  if (window.FaviconCache) {
+    window.FaviconCache.resolveFavicon(hostname).then(url => {
+      if (url) {
+        const img = document.createElement('img');
+        img.src = url;
+        img.onerror = () => {
+          img.style.display = 'none';
+          const fallback = document.createElement('div');
+          fallback.className = 'fallback';
+          fallback.textContent = (hostname || item.title || '?')[0].toUpperCase();
+          iconDiv.appendChild(fallback);
+        };
+        iconDiv.appendChild(img);
+      } else {
+        // No favicon found, show letter
+        const fallback = document.createElement('div');
+        fallback.className = 'fallback';
+        fallback.textContent = (hostname || item.title || '?')[0].toUpperCase();
+        iconDiv.appendChild(fallback);
+      }
+    });
+  } else {
+    // Fallback: use old logic
+    const img = document.createElement('img');
+    img.src = item.favicon || faviconUrl(hostname);
+    let triedFallback = 0;
+    img.onerror = () => {
+      triedFallback++;
+      const fallbacks = faviconFallbackChain(hostname);
+      if (triedFallback <= fallbacks.length) {
+        img.src = fallbacks[triedFallback - 1];
+        return;
+      }
+      img.style.display = 'none';
+      const fallback = document.createElement('div');
+      fallback.className = 'fallback';
+      fallback.textContent = (hostname || item.title || '?')[0].toUpperCase();
+      iconDiv.appendChild(fallback);
+    };
+    iconDiv.appendChild(img);
+  }
+
+  const label = document.createElement('span');
+  label.className = 'tile-label';
+  label.textContent = item.displayTitle || qualifedTitle(item.title, item.hostname, item.bestPath || '/') || simplifyTitle(item.title, item.hostname, item.bestPath || '/');
+
+  const pinBtn = document.createElement('button');
+  pinBtn.className = 'tile-pin';
+  pinBtn.innerHTML = I.pushPin;
+  pinBtn.title = isPinned ? '取消固定' : '固定到首页';
+  pinBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    togglePin(item);
+  });
+
+  // Hide button (ignore list)
+  const hideBtn = document.createElement('button');
+  hideBtn.className = 'tile-hide';
+  hideBtn.textContent = '✕';
+  hideBtn.title = '不在主页显示';
+  hideBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    ignoreSite(item);
+  });
+
+  tile.appendChild(iconDiv);
+  tile.appendChild(label);
+  tile.appendChild(pinBtn);
+  tile.appendChild(hideBtn);
+
+  return tile;
+}
+
+// ===== Pin / Unpin =====
+async function togglePin(item) {
+  const maxItems = gridRows >= 6 ? Infinity : gridCols * gridRows;
+
+  if (pinnedUrls.has(item.url)) {
+    // Unpin: move tile from pinned to history
+    pinnedUrls.delete(item.url);
+    pinnedData.delete(item.url);
+
+    const tile = document.querySelector(`#pinnedGrid .tile[href="${item.url}"]`);
+    if (tile) {
+      // Convert from pinned to normal
+      const pinBtn = tile.querySelector('.tile-pin');
+      if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = '固定到首页'; }
+      tile.classList.remove('pinned');
+      const historyTiles = historyGrid.querySelectorAll('.tile');
+      const historyCount = historyTiles.length;
+      if (historyCount >= maxItems && historyCount > 0) {
+        historyTiles[historyTiles.length - 1].remove();
+      }
+      insertSorted(historyGrid, tile);
+    }
+  } else {
+    // Pin: move tile from history to pinned
+    pinnedUrls.add(item.url);
+    pinnedData.set(item.url, {
+      url: item.url, title: item.title, hostname: item.hostname, favicon: item.favicon,
+      visitCount: item.visitCount || 0,
+      bestPath: item.bestPath || '/',
+      displayTitle: item.displayTitle || '',
+    });
+
+    const tile = document.querySelector(`#historyGrid .tile[href="${item.url}"]`);
+    if (tile) {
+      const pinBtn = tile.querySelector('.tile-pin');
+      if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = '取消固定'; }
+      tile.classList.add('pinned');
+      pinnedGrid.appendChild(tile);
+      fillHistoryGap();
+    }
+  }
+
+  updatePinnedEmpty();
+  await savePinned();
+}
+
+function fillHistoryGap() {
+  const maxItems = gridRows >= 6 ? Infinity : gridCols * gridRows;
+  const currentUrls = new Set(
+    Array.from(historyGrid.querySelectorAll('.tile')).map(t => t.getAttribute('href'))
+  );
+  const needed = maxItems - currentUrls.size;
+  if (needed <= 0) return;
+
+  let added = 0;
+  for (const it of cachedHistory) {
+    if (added >= needed) break;
+    if (pinnedUrls.has(it.url) || currentUrls.has(it.url)) continue;
+    if (ignoredUrls.some(u => it.url.startsWith(u) || it.hostname === u)) continue;
+    historyGrid.appendChild(createTile(it, false));
+    currentUrls.add(it.url);
+    added++;
+  }
+}
+
+function updatePinnedEmpty() {
+  const emptyEl = document.getElementById('pinnedEmpty');
+  const section = document.getElementById('shortcuts');
+  if (pinnedUrls.size === 0) {
+    emptyEl.classList.remove('hidden-empty');
+    section.classList.add('is-empty');
+  } else {
+    emptyEl.classList.add('hidden-empty');
+    section.classList.remove('is-empty');
+  }
+}
+
+async function ignoreSite(item) {
+  let pattern;
+  try {
+    pattern = item.hostname || new URL(item.url).hostname;
+  } catch(e) { return; }
+  if (!pattern) return;
+  if (!ignoredUrls.includes(pattern)) {
+    ignoredUrls.push(pattern);
+    await chrome.storage.local.set({ ignoredUrls });
+    if (pinnedUrls.has(item.url)) {
+      pinnedUrls.delete(item.url);
+      pinnedData.delete(item.url);
+      await savePinned();
+    }
+  }
+  const tile = document.querySelector(`.tile[href="${item.url}"]`);
+  if (tile) tile.remove();
+  updatePinnedEmpty();
+  fillHistoryGap();
+}
+
+let ctxItem = null;
+
+function showCtxMenu(x, y, tileEl) {
+  const menu = document.getElementById('ctxMenu');
+  if (!menu) return;
+  ctxItem = { url: tileEl.href, title: tileEl.querySelector('.tile-label')?.textContent, element: tileEl };
+  const isPinned = tileEl.closest('#pinnedGrid') !== null;
+  const hostname = new URL(tileEl.href).hostname;
+  menu.innerHTML = '';
+  addCtxItem(menu, isPinned ? '取消固定' : '固定', () => {
+    togglePin({ url: tileEl.href, title: ctxItem.title, hostname, favicon: '', visitCount: parseInt(tileEl.dataset.visits) || 0 });
+  });
+  addCtxItem(menu, '在新标签页打开', () => window.open(tileEl.href));
+  addCtxItem(menu, '复制链接', () => navigator.clipboard.writeText(tileEl.href));
+  addCtxDivider(menu);
+  addCtxItem(menu, '屏蔽此站点', () => ignoreSite({ url: tileEl.href, hostname }), true);
+  const maxX = window.innerWidth - menu.offsetWidth;
+  const maxY = window.innerHeight - menu.offsetHeight;
+  menu.style.left = Math.min(x, maxX - 10) + 'px';
+  menu.style.top = Math.min(y, maxY - 10) + 'px';
+  menu.classList.remove('hidden');
+}
+
+function addCtxItem(menu, text, onClick, danger) {
+  const item = document.createElement('div');
+  item.className = 'ctx-item' + (danger ? ' ctx-danger' : '');
+  item.textContent = text;
+  item.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.add('hidden'); onClick(); });
+  menu.appendChild(item);
+}
+function addCtxDivider(menu) {
+  const div = document.createElement('div');
+  div.className = 'ctx-divider';
+  menu.appendChild(div);
+}
+
+// ===== Helpers =====
+function insertSorted(grid, newTile) {
+  const visits = parseInt(newTile.dataset.visits) || 0;
+  const tiles = grid.querySelectorAll('.tile');
+  for (const tile of tiles) {
+    const v = parseInt(tile.dataset.visits) || 0;
+    if (visits >= v) {
+      grid.insertBefore(newTile, tile);
+      return;
+    }
+  }
+  grid.appendChild(newTile);
+}
+
+function simpleTitle(title, hostname) {
+  // Clean page title or fall back to hostname
+  if (!title || title === hostname) return hostname.replace(/^www\./, '');
+  let t = title.replace(/\s*[-–|].*$/, '').trim();
+  if (t.length > 28) t = t.slice(0, 26) + '…';
+  return t;
+}
+
+function qualifedTitle(title, hostname, pathname) {
+  const base = hostname.replace(/^www\./, '');
+  const seg = (pathname || '/').replace(/\/$/, '').split('/').pop() || '';
+  const hasPath = seg && seg.length > 0 && !/\.(html?|php|jsp)$/.test(seg);
+  // If title is already descriptive, append path as suffix
+  if (title && title !== hostname && title !== base) {
+    let t = title.replace(/\s*[-–|].*$/, '').trim();
+    if (t.length > 22) t = t.slice(0, 20) + '…';
+    return hasPath ? t + ' /' + seg : t;
+  }
+  // Generic title → hostname/path
+  return hasPath ? base + '/' + seg : base;
+}
+
+function simplifyTitle(title, hostname, pathname) {
+  // Kept for backward compat; prefer item.displayTitle
+  return qualifedTitle(title, hostname, pathname);
+}
+
+function formatCount(n) {
+  if (n >= 10000) return (n / 10000).toFixed(1) + '万';
+  if (n >= 1000)  return (n / 1000).toFixed(1) + 'k';
+  return String(n);
+}
