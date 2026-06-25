@@ -130,15 +130,16 @@ const historyGrid = document.getElementById('historyGrid');
     if (window._clock24h !== false) {
       timeStr = String(h).padStart(2, '0') + ':' + m;
     } else {
-      var ampm = h >= 12 ? 'PM' : 'AM';
+      var ampm = h >= 12 ? '下午' : '上午';
       var h12 = h % 12 || 12;
-      timeStr = h12 + ':' + m + ' ' + ampm;
+      timeStr = ampm + ' ' + h12 + ':' + m;
     }
     document.getElementById('clockTime').textContent = timeStr;
     document.getElementById('clockDate').textContent = 
       now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 星期' +
       ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
   }
+  window.updateClockDisplay = updateClockDisplay;
   updateClockDisplay();
   setInterval(updateClockDisplay, 10000);
 

@@ -449,8 +449,17 @@ function updateClockFormat() {
   const act = document.querySelector('.seg-btn[data-clock-format][aria-checked="true"]');
   const is24h = !act || act.dataset.clockFormat === '24h';
   window._clock24h = is24h;
-  // Force re-render
-  if (typeof updateClockDisplay === 'function') updateClockDisplay();
+  // Immediately update the clock display
+  var now = new Date();
+  var h = now.getHours();
+  var m = String(now.getMinutes()).padStart(2, '0');
+  if (is24h) {
+    document.getElementById('clockTime').textContent = String(h).padStart(2, '0') + ':' + m;
+  } else {
+    var ampm = h >= 12 ? '下午' : '上午';
+    var h12 = h % 12 || 12;
+    document.getElementById('clockTime').textContent = ampm + ' ' + h12 + ':' + m;
+  }
 }
 
 async function setTheme(theme) {
