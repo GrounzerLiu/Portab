@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>光效卡片</title>
+<style>
+  :root {
+    --bg: #0a0a10;
+    --card-bg: #121218;
+    --border-base: rgba(255, 255, 255, 0.07);
+    --text-main: #e8e8ee;
+    --text-dim: #8b8b97;
+    --violet: 139, 92, 246;   /* #8b5cf6 */
+    --cyan: 34, 211, 238;     /* #22d3ee */
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(1200px circle at 50% -10%, rgba(139,92,246,0.08), transparent 60%),
+      var(--bg);
+    color: var(--text-main);
+    font-family: -apple-system, "PingFang SC", "Segoe UI", system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+  }
+
+  .hint {
+    color: var(--text-dim);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    margin-bottom: 36px;
+  }
+
+  .grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 700px;
+  }
+
+  /* ---- 卡片本体 ---- */
+  .card {
+    --x: 50%;
+    --y: 50%;
+    --glow: 0;
+
+    position: relative;
+    width: 130px;
+    min-height: 90px;
+    padding: 16px 10px;
+    border-radius: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-base);
+    overflow: hidden;
+    isolation: isolate;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* 内部光照：越靠近鼠标中心越亮 */
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      200px circle at var(--x) var(--y),
+      rgba(255,255,255, 0.16),
+      transparent 65%
+    );
+    opacity: var(--glow);
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+  }
+
+  /* 边框光照：用渐变描边叠加在原边框上，越靠近鼠标越亮 */
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(
+      240px circle at var(--x) var(--y),
+      rgba(255,255,255, 0.7),
+      transparent 70%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: var(--glow);
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+  }
+
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 2px;
+    color: rgb(var(--violet));
+    background: rgba(139,92,246,0.12);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .card-icon svg { width: 22px; height: 22px; }
+
+  .card-label {
+    font-size: 12px;
+    text-align: center;
+    color: var(--text-dim);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card::before, .card::after { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="grid" id="grid"></div>
+<script>
+const ITEMS = ['Google','Bing','GitHub','YouTube','Reddit','Twitter','Mastodon','DEV','Stack Overflow','MDN','Wikipedia','Notion'];
+const grid = document.getElementById('grid');
+ITEMS.forEach(name => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.card = '';
+  card.innerHTML = `<div class="card-icon">${name[0]}</div><div class="card-label">${name}</div>`;
+  grid.appendChild(card);
+});
+const cards = Array.from(document.querySelectorAll('[data-card]'));
+
+// 光照影响半径：超过这个距离（鼠标到卡片中心）亮度衰减为 0
+const MAX_DISTANCE = 260;
+
+  function updateCards(mouseX, mouseY) {
+    cards.forEach((card) => {
+      const rect = card.getBoundingClientRect();
+
+      // 鼠标相对卡片左上角的坐标，用于定位渐变圆心（可以在卡片范围之外）
+      const x = mouseX - rect.left;
+      const y = mouseY - rect.top;
+
+      // 鼠标到卡片中心的距离，决定整体亮度
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dist = Math.hypot(mouseX - centerX, mouseY - centerY);
+
+      const glow = Math.max(0, 1 - dist / MAX_DISTANCE);
+
+      card.style.setProperty('--x', x + 'px');
+      card.style.setProperty('--y', y + 'px');
+      card.style.setProperty('--glow', glow.toFixed(3));
+    });
+  }
+
+  window.addEventListener('mousemove', (e) => {
+    updateCards(e.clientX, e.clientY);
+  });
+
+  // 鼠标离开浏览器窗口时，整体淡出
+  window.addEventListener('mouseout', (e) => {
+    if (!e.relatedTarget) {
+      cards.forEach((card) => card.style.setProperty('--glow', '0'));
+    }
+  });
+</script>
+
+</body>
+</html>

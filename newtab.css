@@ -482,6 +482,7 @@ body.search-focused .search-focus-overlay {
 
 /* ===== Tile ===== */
 .tile {
+  --x: 50%; --y: 50%; --glow: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -489,25 +490,47 @@ body.search-focused .search-focus-overlay {
   padding: 16px;
   border-radius: 12px;
   background: var(--card-bg, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--text) 7%, transparent);
   cursor: pointer;
   text-decoration: none;
   color: var(--text);
   position: relative;
   isolation: isolate;
+  overflow: hidden;
 }
+/* 边框光 */
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(240px circle at var(--x) var(--y),
+    rgba(255,255,255, 0.85), transparent 70%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: var(--glow);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+/* 表面光 */
 .tile::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: transparent;
-  transition: background .25s ease-out;
-  z-index: -1;
+  background: radial-gradient(200px circle at var(--x) var(--y),
+    rgba(255,255,255, 0.22), transparent 65%);
+  opacity: var(--glow);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  z-index: 0;
 }
-.tile:hover::after {
-  background: color-mix(in srgb, var(--text) 8%, transparent);
-}
-.tile { transition: background .12s, transform .12s; }
+.tile { transition: transform .12s; }
 .tile:hover { transform: translateY(-2px); }
 
 .tile-icon {
@@ -547,6 +570,7 @@ body.has-wallpaper .tile {
   display: flex; align-items: center; justify-content: center;
   opacity: 0; padding: 0;
   isolation: isolate;
+  z-index: 3;
 }
 .tile-pin::after {
   content: '';

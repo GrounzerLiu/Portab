@@ -143,6 +143,28 @@ const historyGrid = document.getElementById('historyGrid');
   updateClockDisplay();
   setInterval(updateClockDisplay, 10000);
 
+  // Spotlight hover — global mousemove updates all tiles
+  const MAX_SPOTLIGHT = 260;
+  window.addEventListener('mousemove', (e) => {
+    document.querySelectorAll('.tile').forEach(tile => {
+      const rect = tile.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+      const glow = Math.max(0, 1 - dist / MAX_SPOTLIGHT);
+      tile.style.setProperty('--x', x + 'px');
+      tile.style.setProperty('--y', y + 'px');
+      tile.style.setProperty('--glow', glow.toFixed(3));
+    });
+  });
+  window.addEventListener('mouseout', (e) => {
+    if (!e.relatedTarget) {
+      document.querySelectorAll('.tile').forEach(t => t.style.setProperty('--glow', '0'));
+    }
+  });
+
   // Right-click clock → toggle popup
   const clockPopup = document.getElementById('clockPopup');
   // Ensure popup starts hidden
