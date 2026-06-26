@@ -393,9 +393,13 @@ let sugIdx = -1, sugUrl = '';
 function moveSugg(dir) {
   const items = suggestDropdown.children;
   if (items.length === 0) return;
+  // 让旧项先开始淡出
   if (sugIdx >= 0) items[sugIdx].classList.remove('active');
   sugIdx = Math.max(0, Math.min(items.length - 1, sugIdx + dir));
-  items[sugIdx].classList.add('active');
+  // 隔一帧再添加 active，给淡出动画留时间
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    items[sugIdx].classList.add('active');
+  }));
   sugUrl = items[sugIdx].dataset.url || '';
   const txt = items[sugIdx].querySelector('.suggest-title')?.textContent || '';
   searchInput.value = txt;
