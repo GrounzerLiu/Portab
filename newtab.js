@@ -154,12 +154,10 @@ const historyGrid = document.getElementById('historyGrid');
       const cy = rect.top + rect.height / 2;
       const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
       let glow = Math.max(0, 1 - dist / MAX_SPOTLIGHT);
-
-      // 鼠标在搜索框内部时，保持满亮（不会被边缘距离衰减干掉）
-      if (el.classList.contains('search-box') && x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-        glow = Math.max(glow, 0.7);
+      // 鼠标在元素内部时保持最低亮度
+      if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+        glow = Math.max(glow, 0.4);
       }
-
       el.style.setProperty('--x', x + 'px');
       el.style.setProperty('--y', y + 'px');
       el.style.setProperty('--glow', glow.toFixed(3));
