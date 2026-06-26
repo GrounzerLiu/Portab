@@ -638,12 +638,15 @@ async function setWallpaper(mode) {
     picsumUrl = generatePicsumUrl();
   }
   if (mode === 'nasa' && !nasaUrl) {
-    fetchNasaApod().then(() => { saveAll(); applyWallpaper(); });
+    fetchNasaApod().then(() => { saveAll(); applyWallpaper(); tryAutoExtract(); });
   }
 
   await saveAll();
   applyWallpaper();
-  if (currentWallpaper !== 'none') watchWallpaperAndExtract();
+  if (currentWallpaper !== 'none') {
+    watchWallpaperAndExtract();
+    setTimeout(tryAutoExtract, 600);
+  }
 }
 
 function generatePicsumUrl() {
