@@ -304,6 +304,10 @@ async function savePinned() {
 
 // ===== Search =====
 searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    searchInput.blur();
+    return;
+  }
   if (e.key === 'Enter') {
     const query = searchInput.value.trim();
     if (!query) return;
