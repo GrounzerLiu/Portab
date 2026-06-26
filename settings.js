@@ -547,6 +547,7 @@ function applyWallpaper() {
   }
 
   const url = currentWallpaper === 'bing' ? bingImageUrl :
+              currentWallpaper === 'picsum' ? picsumUrl :
               currentWallpaper === 'nasa' ? nasaUrl :
               customWallpaperUrl;
   if (!url) return;
@@ -582,6 +583,7 @@ function applyWallpaper() {
 async function tryAutoExtract() {
   if (!autoExtractToggle?.checked) return;
   const url = currentWallpaper === 'bing' ? bingImageUrl :
+              currentWallpaper === 'picsum' ? picsumUrl :
               currentWallpaper === 'nasa' ? nasaUrl :
               customWallpaperUrl;
   if (!url) return;
@@ -600,6 +602,7 @@ async function watchWallpaperAndExtract() {
   const timer = setInterval(async () => {
     const url = currentWallpaper === 'bing' ? bingImageUrl :
                 currentWallpaper === 'picsum' ? picsumUrl :
+                currentWallpaper === 'nasa' ? nasaUrl :
                 customWallpaperUrl;
     if (url) {
       clearInterval(timer);
