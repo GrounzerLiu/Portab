@@ -63,7 +63,10 @@ const historyGrid = document.getElementById('historyGrid');
       ghostClass: 'sortable-ghost',
       chosenClass: 'sortable-chosen',
       draggable: '.tile.pinned',
-      forceFallback: true,
+      onStart() {
+        // 暂停 spotlight 更新，避免拖拽期间 mousemove 不触发导致残留
+        document.querySelectorAll('.tile.pinned').forEach(t => t.style.setProperty('--glow', '0'));
+      },
       onEnd(evt) {
         // Rebuild pinnedData in new DOM order
         const order = [];
