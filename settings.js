@@ -68,29 +68,29 @@ function initSettings() {
   const refreshBtn = document.getElementById('refreshWallpaperBtn');
   if (refreshBtn) {
     refreshBtn.addEventListener('click', async () => {
-      if (currentWallpaper !== 'picsum') return;
+      if (currentWallpaper !== 'picsum' && currentWallpaper !== 'nasa') return;
       refreshBtn.classList.add('spinning');
 
-      // Fade out → swap URL → wait for image load → fade in
       const wpBg = document.getElementById('wallpaperBg');
       if (wpBg) wpBg.style.opacity = '0';
-
       await new Promise(r => setTimeout(r, 220));
 
-      currentPicsumSeed = Date.now().toString(36) + Math.floor(Math.random() * 1000);
-      picsumUrl = generatePicsumUrl();
-
-      // Preload new image before applying
-      await new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve();
-        img.onerror = () => resolve(); // proceed even on error
-        img.src = picsumUrl;
-      });
+      if (currentWallpaper === 'picsum') {
+        currentPicsumSeed = Date.now().toString(36) + Math.floor(Math.random() * 1000);
+        picsumUrl = generatePicsumUrl();
+        await new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+          img.src = picsumUrl;
+        });
+      } else if (currentWallpaper === 'nasa') {
+        nasaUrl = '';
+        await fetchNasaApod();
+      }
 
       applyWallpaper();
 
-      // Force reflow then fade in
       if (wpBg) {
         void wpBg.offsetHeight;
         wpBg.style.opacity = '';
@@ -101,7 +101,7 @@ function initSettings() {
       setTimeout(() => refreshBtn.classList.remove('spinning'), 800);
     });
     // Set initial visibility
-    refreshBtn.style.display = currentWallpaper === 'picsum' ? 'flex' : 'none';
+    refreshBtn.style.display = (currentWallpaper === 'picsum' || currentWallpaper === 'nasa') ? 'flex' : 'none';
   }
 
   themeBtns.forEach(btn => {
