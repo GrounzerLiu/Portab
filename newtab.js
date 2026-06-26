@@ -146,22 +146,28 @@ const historyGrid = document.getElementById('historyGrid');
   // Spotlight hover — global mousemove updates all tiles
   const MAX_SPOTLIGHT = 260;
   window.addEventListener('mousemove', (e) => {
-    document.querySelectorAll('.tile').forEach(tile => {
-      const rect = tile.getBoundingClientRect();
+    document.querySelectorAll('.tile, .search-box').forEach(el => {
+      const rect = el.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
       const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-      const glow = Math.max(0, 1 - dist / MAX_SPOTLIGHT);
-      tile.style.setProperty('--x', x + 'px');
-      tile.style.setProperty('--y', y + 'px');
-      tile.style.setProperty('--glow', glow.toFixed(3));
+      let glow = Math.max(0, 1 - dist / MAX_SPOTLIGHT);
+
+      // 鼠标在搜索框内部时，保持满亮（不会被边缘距离衰减干掉）
+      if (el.classList.contains('search-box') && x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+        glow = Math.max(glow, 0.7);
+      }
+
+      el.style.setProperty('--x', x + 'px');
+      el.style.setProperty('--y', y + 'px');
+      el.style.setProperty('--glow', glow.toFixed(3));
     });
   });
   window.addEventListener('mouseout', (e) => {
     if (!e.relatedTarget) {
-      document.querySelectorAll('.tile').forEach(t => t.style.setProperty('--glow', '0'));
+      document.querySelectorAll('.tile, .search-box').forEach(el => el.style.setProperty('--glow', '0'));
     }
   });
 

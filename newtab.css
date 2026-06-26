@@ -278,7 +278,48 @@ body.has-wallpaper .clock-date {
   position: relative;
   z-index: 3;
 }
-.search-box { position: relative; width: 100%; max-width: 580px; margin-bottom: 10px; }
+.search-box {
+  --x: 50%; --y: 50%; --glow: 0;
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  margin-bottom: 10px;
+  border-radius: 28px;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* 搜索框边框光 */
+.search-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(240px circle at var(--x) var(--y),
+    rgba(255,255,255, 0.7), transparent 70%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: var(--glow);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  z-index: 3;
+}
+/* 搜索框表面光 */
+.search-box::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(200px circle at var(--x) var(--y),
+    rgba(255,255,255, 0.18), transparent 65%);
+  opacity: var(--glow);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  z-index: 1;
+}
 
 .search-icon {
   position: absolute;
