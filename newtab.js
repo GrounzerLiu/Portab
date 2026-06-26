@@ -143,28 +143,26 @@ const historyGrid = document.getElementById('historyGrid');
   updateClockDisplay();
   setInterval(updateClockDisplay, 10000);
 
-  // Spotlight hover — capsule distance field
-  const MAX_SPOTLIGHT = 260;
+  // Spotlight hover — capsule distance field, per-element range via CSS
   window.addEventListener('mousemove', (e) => {
     document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn').forEach(el => {
       const r = el.getBoundingClientRect();
       const mx = e.clientX - r.left;
       const my = e.clientY - r.top;
-      const m = Math.min(r.width, r.height); // shortest side = pill radius
+      const m = Math.min(r.width, r.height);
 
       let distToAxis;
       if (r.width > r.height) {
-        // Horizontal pill: axis from (m/2, m/2) to (w-m/2, m/2)
         const ax = Math.max(m/2, Math.min(mx, r.width - m/2));
         distToAxis = Math.hypot(mx - ax, my - m/2);
       } else {
-        // Vertical pill: axis from (m/2, m/2) to (m/2, h-m/2)
         const ay = Math.max(m/2, Math.min(my, r.height - m/2));
         distToAxis = Math.hypot(mx - m/2, my - ay);
       }
 
       const glowDist = distToAxis - m/2;
-      const glow = Math.min(1, Math.max(0, 1 - glowDist / MAX_SPOTLIGHT));
+      const range = parseFloat(getComputedStyle(el).getPropertyValue('--spotlight-range')) || 260;
+      const glow = Math.min(1, Math.max(0, 1 - glowDist / range));
 
       el.style.setProperty('--x', mx + 'px');
       el.style.setProperty('--y', my + 'px');

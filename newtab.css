@@ -87,6 +87,7 @@ body.ready { opacity: 1; }
 
 /* ===== Refresh wallpaper button (only visible in random mode) ===== */
 .refresh-wallpaper-btn {
+  --spotlight-range: 30px;
   --x: 50%; --y: 50%; --glow: 0;
   position: fixed;
   top: 16px;
@@ -152,6 +153,7 @@ body.ready { opacity: 1; }
 
 /* ===== Settings button ===== */
 .settings-btn {
+  --spotlight-range: 30px;
   --x: 50%; --y: 50%; --glow: 0;
   position: fixed;
   top: 16px;
