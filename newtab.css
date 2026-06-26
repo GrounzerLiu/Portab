@@ -303,7 +303,6 @@ body.has-wallpaper .clock-date {
   max-width: 580px;
   margin-bottom: 10px;
   border-radius: 28px;
-  overflow: hidden;
   isolation: isolate;
 }
 /* 搜索框边框光 */
