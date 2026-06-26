@@ -54,12 +54,12 @@
       return cached.url;
     }
 
-    // 2. Build candidate chain — 国内优先
+    // 2. Build candidate chain — 直接 /favicon.ico 最可靠
     const sources = [
       'https://' + domain + '/favicon.ico',
-      'https://icons.duckduckgo.com/ip3/' + domain + '.ico',
       'https://api.faviconkit.com/' + domain + '/' + size,
       'https://www.google.com/s2/favicons?domain=' + domain + '&sz=' + size,
+      'https://icons.duckduckgo.com/ip3/' + domain + '.ico',
     ];
 
     for (const url of sources) {
@@ -67,7 +67,12 @@
         const ok = await new Promise((resolve) => {
           const img = new Image();
           const t = setTimeout(() => { img.onload = img.onerror = null; resolve(false); }, 5000);
-          img.onload = () => { clearTimeout(t); resolve(true); };
+          img.onload = () => {
+            clearTimeout(t);
+            // 过滤掉占位图：DuckDuckGo 返回箭头，faviconkit 返回 1x1 像素
+            if (img.naturalWidth < 16 || img.naturalHeight < 16) { resolve(false); return; }
+            resolve(true);
+          };
           img.onerror = () => { clearTimeout(t); resolve(false); };
           img.src = url;
         });
