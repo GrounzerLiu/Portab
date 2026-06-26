@@ -10,9 +10,9 @@
 
 ## 截图
 
-| 主页 | 设置弹窗 |
-|------|---------|
-| ![](screenshots/main.jpeg) | ![](screenshots/settings.jpeg) |
+![光效展示](screenshots/spotlight.jpg)
+
+![搜索展示](screenshots/search.jpg)
 
 ## 安装
 
