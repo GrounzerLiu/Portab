@@ -11,6 +11,7 @@ let seedColor = '#4c9aff';
 let customWallpaperUrl = '';
 let bingImageUrl = '';
 let picsumUrl = '';
+let nasaUrl = '';
 
 // Wallpaper advanced
 let overlayEnabled = true;
@@ -546,7 +547,7 @@ function applyWallpaper() {
   }
 
   const url = currentWallpaper === 'bing' ? bingImageUrl :
-              currentWallpaper === 'picsum' ? picsumUrl :
+              currentWallpaper === 'nasa' ? nasaUrl :
               customWallpaperUrl;
   if (!url) return;
 
@@ -581,7 +582,7 @@ function applyWallpaper() {
 async function tryAutoExtract() {
   if (!autoExtractToggle?.checked) return;
   const url = currentWallpaper === 'bing' ? bingImageUrl :
-              currentWallpaper === 'picsum' ? picsumUrl :
+              currentWallpaper === 'nasa' ? nasaUrl :
               customWallpaperUrl;
   if (!url) return;
   try {
@@ -632,6 +633,9 @@ async function setWallpaper(mode) {
   if (mode === 'picsum' && !picsumUrl) {
     currentPicsumSeed = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     picsumUrl = generatePicsumUrl();
+  }
+  if (mode === 'nasa' && !nasaUrl) {
+    fetchNasaApod().then(() => { saveAll(); applyWallpaper(); });
   }
 
   await saveAll();
@@ -687,12 +691,27 @@ async function fetchBingWallpaper() {
   console.error('Failed to fetch Bing wallpaper from all sources');
 }
 
+async function fetchNasaApod() {
+  try {
+    const resp = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');
+    const data = await resp.json();
+    if (data.hdurl) {
+      nasaUrl = data.hdurl;
+      await chrome.storage.local.set({ nasaUrl });
+    } else if (data.url) {
+      nasaUrl = data.url;
+      await chrome.storage.local.set({ nasaUrl });
+    }
+  } catch (e) { console.error('Failed to fetch NASA APOD', e); }
+}
+
 async function saveAll() {
   await chrome.storage.local.set({
     wallpaper: currentWallpaper,
     customWallpaperUrl,
     bingImageUrl,
     picsumUrl,
+    nasaUrl,
     overlayEnabled,
     overlayColor,
     overlayOpacity,
@@ -707,7 +726,7 @@ async function loadWallpaper() {
 }
 async function loadWallpaperCached() {
   const result = await chrome.storage.local.get([
-    'wallpaper', 'customWallpaperUrl', 'bingImageUrl', 'picsumUrl',
+    'wallpaper', 'customWallpaperUrl', 'bingImageUrl', 'picsumUrl', 'nasaUrl',
     'overlayEnabled', 'overlayColor', 'overlayOpacity',
     'blurEnabled', 'blurAmount', 'autoExtractColor',
   ]);
@@ -718,6 +737,7 @@ async function loadWallpaperCached() {
   if (result.customWallpaperUrl) customWallpaperUrl = result.customWallpaperUrl;
   if (result.bingImageUrl) bingImageUrl = result.bingImageUrl;
   if (result.picsumUrl) picsumUrl = result.picsumUrl;
+  if (result.nasaUrl) nasaUrl = result.nasaUrl;
 
   if (result.overlayEnabled !== undefined) overlayEnabled = result.overlayEnabled;
   if (result.overlayColor) overlayColor = result.overlayColor;

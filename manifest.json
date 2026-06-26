@@ -22,7 +22,9 @@
     "https://icons.duckduckgo.com/*",
     "https://picsum.photos/*",
     "https://fastly.picsum.photos/*",
-    "https://api.paugram.com/*"
+    "https://api.paugram.com/*",
+    "https://api.nasa.gov/*",
+    "https://api.faviconkit.com/*"
   ],
   "icons": {
     "16": "icons/icon16.png",
