@@ -103,6 +103,7 @@ const historyGrid = document.getElementById('historyGrid');
   searchInput.addEventListener('input', () => {
     searchPlaceholder.textContent = searchInput.value || '搜索或输入网址…';
     searchPlaceholder.classList.toggle('has-text', !!searchInput.value);
+    searchClear.classList.toggle('visible', !!searchInput.value);
   });
 
   // Search button click
@@ -117,6 +118,19 @@ const historyGrid = document.getElementById('historyGrid');
   });
   // Prevent blur when clicking search icon
   document.getElementById('searchBtn').addEventListener('mousedown', (e) => e.preventDefault());
+
+  // Clear button
+  const searchClear = document.getElementById('searchClear');
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchPlaceholder.textContent = '搜索或输入网址…';
+    searchPlaceholder.classList.remove('has-text');
+    searchClear.classList.remove('visible');
+    searchInput.focus();
+    // Trigger input event to update suggestions
+    searchInput.dispatchEvent(new Event('input'));
+  });
+  searchClear.addEventListener('mousedown', (e) => e.preventDefault());
 
   // Context menu
   document.querySelectorAll('.grid').forEach(grid => {

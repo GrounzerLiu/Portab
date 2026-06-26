@@ -453,6 +453,26 @@ body.has-wallpaper .clock-date {
   transition: transform .15s ease-out, color .15s;
 }
 
+/* 清除按钮 */
+.search-clear-btn {
+  position: absolute; right: 52px; top: 50%;
+  transform: translateY(-50%);
+  width: 28px; height: 28px;
+  border: none; border-radius: 50%;
+  background: transparent; color: var(--text-muted);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  padding: 0; z-index: 2;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s ease-out, background .25s;
+  isolation: isolate;
+}
+.search-clear-btn::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  background: transparent; transition: background .25s; z-index: -1;
+}
+.search-clear-btn:hover::after { background: color-mix(in srgb, var(--text) 8%, transparent); }
+.search-clear-btn.visible { opacity: 1; pointer-events: auto; }
+
 body.has-wallpaper .search-input {
   background: color-mix(in srgb, var(--card-bg, var(--surface)) 70%, transparent);
   backdrop-filter: blur(12px);
