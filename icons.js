@@ -18,16 +18,14 @@ I.lightMode = '<svg class="icon" viewBox="0 -960 960 960" fill="currentColor"><p
 I.brightnessAuto = '<svg class="icon" viewBox="0 -960 960 960" fill="currentColor"><path d="M312-320h64l32-92h146l32 92h62L512-680h-64L312-320Zm114-144 52-150h4l52 150H426Zm54 436L346-160H160v-186L28-480l132-134v-186h186l134-132 134 132h186v186l132 134-132 134v186H614L480-28Zm0-112 100-100h140v-140l100-100-100-100v-140H580L480-820 380-720H240v140L140-480l100 100v140h140l100 100Zm0-340Z"/></svg>';
 
 // Favicon helper — try multiple CDN sources for reliability in China
-// Returns a primary URL; <img onerror> chains to fallback
 function faviconUrl(domain, size = 32) {
-  // DuckDuckGo's favicon service works well in China and is reliable
-  return 'https://icons.duckduckgo.com/ip3/' + domain + '.ico';
+  // Direct /favicon.ico works for most sites and doesn't depend on any CDN
+  return 'https://' + domain + '/favicon.ico';
 }
 
-// Try alternative favicon sources on error
 function faviconFallbackChain(domain) {
   return [
-    'https://' + domain + '/favicon.ico',
+    'https://icons.duckduckgo.com/ip3/' + domain + '.ico',
     'https://www.google.com/s2/favicons?domain=' + domain + '&sz=32',
   ];
 }
