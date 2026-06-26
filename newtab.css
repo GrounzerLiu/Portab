@@ -844,18 +844,36 @@ body.has-wallpaper .tile {
   pointer-events: none;
 }
 .suggest-item {
+  position: relative;
   padding: 10px 20px;
   cursor: pointer;
   color: rgba(255,255,255,.9);
-  transition: background .25s ease-out, box-shadow .25s ease-out, transform .25s ease-out;
+  transition: transform .25s ease-out;
   border-radius: 8px;
   margin: 0 4px;
+  isolation: isolate;
+}
+/* 晕开背景 — radial gradient 从小放大 */
+.suggest-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, rgba(255,255,255,.2) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(.3);
+  transition: opacity .25s ease-out, transform .25s ease-out;
+  pointer-events: none;
+  z-index: -1;
+}
+.suggest-item:hover::before,
+.suggest-item.active::before {
+  opacity: 1;
+  transform: scale(1);
 }
 .suggest-item:hover,
 .suggest-item.active {
-  background: rgba(255,255,255,.2);
   transform: translateX(6px);
-  box-shadow: 0 0 12px rgba(255,255,255,.08);
 }
 .suggest-title { display: block; font-size: 14px; line-height: 1.4; }
 .suggest-url { display: block; font-size: 11px; color: rgba(255,255,255,.5); line-height: 1.3; }
