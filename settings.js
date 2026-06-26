@@ -780,7 +780,7 @@ async function loadWallpaperCached() {
 
   // Show/hide refresh button
   const refreshBtn = document.getElementById('refreshWallpaperBtn');
-  if (refreshBtn) refreshBtn.style.display = currentWallpaper === 'picsum' ? 'flex' : 'none';
+  if (refreshBtn) refreshBtn.style.display = (currentWallpaper === 'picsum' || currentWallpaper === 'nasa') ? 'flex' : 'none';
 
   // Auto-extract toggle
   if (result.autoExtractColor && autoExtractToggle) {
@@ -789,15 +789,23 @@ async function loadWallpaperCached() {
 
   if (currentWallpaper !== 'none' && autoExtractToggle?.checked) {
     setTimeout(watchWallpaperAndExtract, 500);
+    setTimeout(tryAutoExtract, 800);
   }
 }
 
 async function loadWallpaperBingUpdate() {
-  if (currentWallpaper !== 'bing') return;
-  await fetchBingWallpaper();
-  await saveAll();
-  applyWallpaper();
-  if (autoExtractToggle?.checked) watchWallpaperAndExtract();
+  if (currentWallpaper === 'bing') {
+    await fetchBingWallpaper();
+    await saveAll();
+    applyWallpaper();
+    if (autoExtractToggle?.checked) watchWallpaperAndExtract();
+  }
+  if (currentWallpaper === 'nasa' && !nasaUrl) {
+    await fetchNasaApod();
+    await saveAll();
+    applyWallpaper();
+    if (autoExtractToggle?.checked) watchWallpaperAndExtract();
+  }
 }
 
 // ===== Dialog =====
