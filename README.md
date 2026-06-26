@@ -14,6 +14,10 @@
 
 ![搜索展示](screenshots/search.jpg)
 
+![主页](screenshots/main.jpeg)
+
+![设置](screenshots/settings.jpeg)
+
 ## 安装
 
 1. 打开 `chrome://extensions`
