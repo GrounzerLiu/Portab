@@ -54,10 +54,11 @@
       return cached.url;
     }
 
-    // 2. Build candidate chain
+    // 2. Build candidate chain — 国内优先
     const sources = [
-      'https://icons.duckduckgo.com/ip3/' + domain + '.ico',
       'https://' + domain + '/favicon.ico',
+      'https://icons.duckduckgo.com/ip3/' + domain + '.ico',
+      'https://api.faviconkit.com/' + domain + '/' + size,
       'https://www.google.com/s2/favicons?domain=' + domain + '&sz=' + size,
     ];
 
