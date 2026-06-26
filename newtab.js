@@ -67,72 +67,65 @@ const historyGrid = document.getElementById('historyGrid');
   });
   pinnedGrid.addEventListener('dragend', (e) => {
     e.target.style.opacity = '1';
+    const ph = document.getElementById('dropPlaceholder');
+    if (ph) ph.remove();
   });
 
+  function updateDropPlaceholder(mx, my) {
+    let ph = document.getElementById('dropPlaceholder');
+    if (!ph) {
+      ph = document.createElement('div');
+      ph.id = 'dropPlaceholder';
+      ph.style.cssText = 'position:absolute;width:2px;background:var(--accent);border-radius:1px;pointer-events:none;z-index:10;transition:top .1s ease-out;box-shadow:0 0 6px var(--accent);';
+      pinnedGrid.style.position = pinnedGrid.style.position || 'relative';
+      pinnedGrid.appendChild(ph);
+    }
+    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')];
+    const gridRect = pinnedGrid.getBoundingClientRect();
+    // 默认放最后
+    let refTop = gridRect.bottom - gridRect.top;
+    let refLeft = 0;
+    for (const tile of tiles) {
+      const rect = tile.getBoundingClientRect();
+      if (my < rect.top + rect.height / 2) {
+        refTop = rect.top - gridRect.top;
+        refLeft = rect.left - gridRect.left;
+        break;
+      }
+    }
+    ph.style.top = (refTop - 1) + 'px';
+    ph.style.left = refLeft + 'px';
+    ph.style.height = '40px';
+  }
   pinnedGrid.addEventListener('dragover', (e) => {
     e.preventDefault();
-    const target = e.target.closest('.tile.pinned');
-    const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
-    if (!dragged) return;
-    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.style.boxShadow = '');
-
-    let bestTile = target;
-    if (!bestTile || bestTile === dragged) {
-      const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
-      bestTile = null;
-      for (const tile of tiles) {
-        const rect = tile.getBoundingClientRect();
-        if (e.clientY < rect.top + rect.height / 2) { bestTile = tile; break; }
-      }
-    }
-
-    if (bestTile && bestTile !== dragged) {
-      const rect = bestTile.getBoundingClientRect();
-      if (e.clientY < rect.top + rect.height / 2) {
-        bestTile.style.boxShadow = 'inset 3px 0 0 var(--accent)';
-      } else {
-        bestTile.style.boxShadow = 'inset -3px 0 0 var(--accent)';
-      }
-    } else if (!bestTile) {
-      const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
-      if (tiles.length > 0) {
-        tiles[tiles.length - 1].style.boxShadow = 'inset -3px 0 0 var(--accent)';
-      }
-    }
+    // 计算放置位置并显示独立占位条
+    updateDropPlaceholder(e.clientX, e.clientY);
   });
-
-  pinnedGrid.addEventListener('dragleave', (e) => {
-    const tile = e.target.closest('.tile.pinned');
-    if (tile) tile.style.boxShadow = '';
+  pinnedGrid.addEventListener('dragleave', () => {
+    const ph = document.getElementById('dropPlaceholder');
+    if (ph) ph.remove();
   });
-
   pinnedGrid.addEventListener('drop', (e) => {
     e.preventDefault();
-    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.style.boxShadow = '');
+    const ph = document.getElementById('dropPlaceholder');
     const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
-    if (!dragged) return;
-    let target = e.target.closest('.tile.pinned');
-
-    // 如果鼠标在卡片间隙（无直接 target），根据 Y 查找最近的卡片
-    if (!target || target === dragged) {
-      const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
-      target = null;
-      for (const tile of tiles) {
-        const rect = tile.getBoundingClientRect();
-        if (e.clientY < rect.top + rect.height / 2) { target = tile; break; }
+    if (!dragged || !ph) return;
+    // 根据占位条的 top 位置找到插入点
+    const phTop = parseFloat(ph.style.top);
+    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
+    let inserted = false;
+    for (const tile of tiles) {
+      const rect = tile.getBoundingClientRect();
+      const tileTop = rect.top - pinnedGrid.getBoundingClientRect().top;
+      if (phTop < tileTop + rect.height / 2) {
+        pinnedGrid.insertBefore(dragged, tile);
+        inserted = true;
+        break;
       }
     }
-
-    if (target && target !== dragged) {
-      const rect = target.getBoundingClientRect();
-      if (e.clientY < rect.top + rect.height / 2) {
-        pinnedGrid.insertBefore(dragged, target);
-      } else {
-        pinnedGrid.insertBefore(dragged, target.nextSibling);
-      }
-    } else {
-      pinnedGrid.appendChild(dragged);
-    }
+    if (!inserted) pinnedGrid.appendChild(dragged);
+    if (ph) ph.remove();
     // Rebuild pinnedData in DOM order
     const newPinned = [];
     pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => {
