@@ -87,6 +87,7 @@ body.ready { opacity: 1; }
 
 /* ===== Refresh wallpaper button (only visible in random mode) ===== */
 .refresh-wallpaper-btn {
+  --x: 50%; --y: 50%; --glow: 0;
   position: fixed;
   top: 16px;
   right: 64px;
@@ -102,11 +103,13 @@ body.ready { opacity: 1; }
   justify-content: center;
   padding: 0;
   z-index: 10;
+  isolation: isolate;
+  overflow: hidden;
 }
 .refresh-wallpaper-btn .icon,
 .settings-btn .icon {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   width: 22px; height: 22px;
 }
 .refresh-wallpaper-btn::before {
@@ -119,24 +122,25 @@ body.ready { opacity: 1; }
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   transition: background .25s ease-out;
   border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  z-index: 0;
 }
 .refresh-wallpaper-btn::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: transparent;
-  transition: background .25s ease-out;
+  background: radial-gradient(80px circle at var(--x) var(--y),
+    rgba(255,255,255, 0.2), transparent 60%);
+  opacity: var(--glow);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  z-index: 1;
 }
 .refresh-wallpaper-btn:hover { color: var(--text); }
 .refresh-wallpaper-btn:hover::before {
   background: color-mix(in srgb, var(--surface2) 65%, transparent);
 }
-.refresh-wallpaper-btn:hover::after {
-  background: color-mix(in srgb, var(--text) 6%, transparent);
-}
 .refresh-wallpaper-btn.spinning svg { animation: refresh-spin .8s ease-out; }
-.refresh-wallpaper-btn .icon { width: 22px; height: 22px; }
 @keyframes refresh-spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -144,6 +148,7 @@ body.ready { opacity: 1; }
 
 /* ===== Settings button ===== */
 .settings-btn {
+  --x: 50%; --y: 50%; --glow: 0;
   position: fixed;
   top: 16px;
   right: 16px;
@@ -159,6 +164,8 @@ body.ready { opacity: 1; }
   justify-content: center;
   padding: 0;
   z-index: 10;
+  isolation: isolate;
+  overflow: hidden;
 }
 .settings-btn::before {
   content: '';
@@ -170,23 +177,24 @@ body.ready { opacity: 1; }
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   transition: background .25s ease-out;
   border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  z-index: 0;
 }
 .settings-btn::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: transparent;
-  transition: background .25s ease-out;
+  background: radial-gradient(80px circle at var(--x) var(--y),
+    rgba(255,255,255, 0.2), transparent 60%);
+  opacity: var(--glow);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  z-index: 1;
 }
 .settings-btn:hover { color: var(--text); }
 .settings-btn:hover::before {
   background: color-mix(in srgb, var(--surface2) 65%, transparent);
 }
-.settings-btn:hover::after {
-  background: color-mix(in srgb, var(--text) 6%, transparent);
-}
-.settings-btn .icon { width: 22px; height: 22px; }
 
 /* ===== Search ===== */
 .clock {

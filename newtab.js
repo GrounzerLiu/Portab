@@ -146,7 +146,7 @@ const historyGrid = document.getElementById('historyGrid');
   // Spotlight hover — capsule distance field
   const MAX_SPOTLIGHT = 260;
   window.addEventListener('mousemove', (e) => {
-    document.querySelectorAll('.tile, .search-box').forEach(el => {
+    document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn').forEach(el => {
       const r = el.getBoundingClientRect();
       const mx = e.clientX - r.left;
       const my = e.clientY - r.top;
@@ -173,7 +173,7 @@ const historyGrid = document.getElementById('historyGrid');
   });
   window.addEventListener('mouseout', (e) => {
     if (!e.relatedTarget) {
-      document.querySelectorAll('.tile, .search-box').forEach(el => el.style.setProperty('--glow', '0'));
+      document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn').forEach(el => el.style.setProperty('--glow', '0'));
     }
   });
 
