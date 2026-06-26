@@ -74,22 +74,29 @@ const historyGrid = document.getElementById('historyGrid');
     const target = e.target.closest('.tile.pinned');
     const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
     if (!dragged) return;
-    // 清除所有旧高亮
     pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.style.boxShadow = '');
-    // 根据鼠标在目标卡片的上半/下半决定插入位置
-    if (target && target !== dragged) {
-      const rect = target.getBoundingClientRect();
-      if (e.clientY < rect.top + rect.height / 2) {
-        target.style.boxShadow = 'inset 3px 0 0 var(--accent)';
-      } else {
-        target.style.boxShadow = 'inset -3px 0 0 var(--accent)';
+
+    let bestTile = target;
+    if (!bestTile || bestTile === dragged) {
+      const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
+      bestTile = null;
+      for (const tile of tiles) {
+        const rect = tile.getBoundingClientRect();
+        if (e.clientY < rect.top + rect.height / 2) { bestTile = tile; break; }
       }
-    } else if (!target) {
-      // 鼠标不在任何卡片上
+    }
+
+    if (bestTile && bestTile !== dragged) {
+      const rect = bestTile.getBoundingClientRect();
+      if (e.clientY < rect.top + rect.height / 2) {
+        bestTile.style.boxShadow = 'inset 3px 0 0 var(--accent)';
+      } else {
+        bestTile.style.boxShadow = 'inset -3px 0 0 var(--accent)';
+      }
+    } else if (!bestTile) {
       const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
       if (tiles.length > 0) {
-        const last = tiles[tiles.length - 1];
-        last.style.boxShadow = 'inset -3px 0 0 var(--accent)';
+        tiles[tiles.length - 1].style.boxShadow = 'inset -3px 0 0 var(--accent)';
       }
     }
   });
@@ -104,7 +111,18 @@ const historyGrid = document.getElementById('historyGrid');
     pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.style.boxShadow = '');
     const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
     if (!dragged) return;
-    const target = e.target.closest('.tile.pinned');
+    let target = e.target.closest('.tile.pinned');
+
+    // 如果鼠标在卡片间隙（无直接 target），根据 Y 查找最近的卡片
+    if (!target || target === dragged) {
+      const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
+      target = null;
+      for (const tile of tiles) {
+        const rect = tile.getBoundingClientRect();
+        if (e.clientY < rect.top + rect.height / 2) { target = tile; break; }
+      }
+    }
+
     if (target && target !== dragged) {
       const rect = target.getBoundingClientRect();
       if (e.clientY < rect.top + rect.height / 2) {
@@ -113,7 +131,6 @@ const historyGrid = document.getElementById('historyGrid');
         pinnedGrid.insertBefore(dragged, target.nextSibling);
       }
     } else {
-      // 放末尾
       pinnedGrid.appendChild(dragged);
     }
     // Rebuild pinnedData in DOM order
