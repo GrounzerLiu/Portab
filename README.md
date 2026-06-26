@@ -14,9 +14,9 @@
 
 ![](screenshots/search.jpg)
 
-![](screenshots/main.jpeg)
+![](screenshots/main.jpg)
 
-![](screenshots/settings.jpeg)
+![](screenshots/settings.jpg)
 
 ## 安装
 
