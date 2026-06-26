@@ -10,13 +10,13 @@
 
 ## 截图
 
-![光效展示](screenshots/spotlight.jpg)
+![](screenshots/spotlight.jpg)
 
-![搜索展示](screenshots/search.jpg)
+![](screenshots/search.jpg)
 
-![主页](screenshots/main.jpeg)
+![](screenshots/main.jpeg)
 
-![设置](screenshots/settings.jpeg)
+![](screenshots/settings.jpeg)
 
 ## 安装
 
