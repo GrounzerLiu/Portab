@@ -56,6 +56,43 @@ const historyGrid = document.getElementById('historyGrid');
   autoAnimate(pinnedGrid, { duration: 200 });
   autoAnimate(historyGrid, { duration: 200 });
 
+  // Drag-and-drop reorder within pinned grid (native draggable API)
+  pinnedGrid.addEventListener('dragstart', (e) => {
+    if (!e.target.classList.contains('tile') || !e.target.classList.contains('pinned')) {
+      e.preventDefault();
+      return;
+    }
+    e.target.style.opacity = '0.4';
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  pinnedGrid.addEventListener('dragend', (e) => {
+    e.target.style.opacity = '1';
+  });
+  pinnedGrid.addEventListener('dragover', (e) => e.preventDefault());
+  pinnedGrid.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
+    const target = e.target.closest('.tile.pinned');
+    if (dragged && target && dragged !== target) {
+      const children = [...pinnedGrid.children];
+      const dragIdx = children.indexOf(dragged);
+      const targetIdx = children.indexOf(target);
+      if (dragIdx < targetIdx) {
+        pinnedGrid.insertBefore(dragged, target.nextSibling);
+      } else {
+        pinnedGrid.insertBefore(dragged, target);
+      }
+      // Rebuild pinnedData in DOM order
+      const newPinned = [];
+      pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => {
+        const url = t.getAttribute('href');
+        if (pinnedData.has(url)) newPinned.push(pinnedData.get(url));
+      });
+      pinnedData = new Map(newPinned.map(v => [v.url, v]));
+      savePinned();
+    }
+  });
+
   // Search box focus state
   const searchBox = document.querySelector('.search-box');
   const searchPlaceholder = document.getElementById('searchPlaceholder');
@@ -478,6 +515,7 @@ function renderHistory(historyItems) {
 function createTile(item, isPinned) {
   const tile = document.createElement('a');
   tile.className = 'tile' + (isPinned ? ' pinned' : '');
+  if (isPinned) tile.draggable = true;
   tile.href = item.url;
   tile.title = (item.title || '') + '\n' + item.url + (item.visitCount ? `\n访问 ${formatCount(item.visitCount)} 次` : '');
   tile.dataset.visits = item.visitCount || 0;
@@ -577,6 +615,7 @@ async function togglePin(item) {
       const pinBtn = tile.querySelector('.tile-pin');
       if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = '固定到首页'; }
       tile.classList.remove('pinned');
+      tile.draggable = false;
       const historyTiles = historyGrid.querySelectorAll('.tile');
       const historyCount = historyTiles.length;
       if (historyCount >= maxItems && historyCount > 0) {
@@ -599,6 +638,7 @@ async function togglePin(item) {
       const pinBtn = tile.querySelector('.tile-pin');
       if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = '取消固定'; }
       tile.classList.add('pinned');
+      tile.draggable = true;
       pinnedGrid.appendChild(tile);
       fillHistoryGap();
     }
