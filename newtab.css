@@ -589,12 +589,7 @@ body.search-focused .search-focus-overlay {
   z-index: 0;
 }
 .tile { transition: transform .12s; }
-.tile.dragging { opacity: 0.5; }
-.tile-placeholder {
-  opacity: 0.7;
-  border: 2px dashed var(--accent) !important;
-  background: color-mix(in srgb, var(--accent) 12%, transparent) !important;
-}
+.tile.dragging { opacity: 0.4; }
 
 .tile-icon {
   width: 40px; height: 40px;
