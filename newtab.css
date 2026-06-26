@@ -645,6 +645,7 @@ body.has-wallpaper .tile {
 .tile-pin:hover { color: var(--accent); }
 .tile.pinned .tile-pin { opacity: 1; color: var(--accent); }
 .tile.pinned .tile-pin:hover::after { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+.tile.pinned.drop-target { box-shadow: -3px 0 0 var(--accent); }
 
 .tile-hide {
   position: absolute; bottom: 2px; right: 6px;

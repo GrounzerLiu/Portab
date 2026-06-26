@@ -68,9 +68,21 @@ const historyGrid = document.getElementById('historyGrid');
   pinnedGrid.addEventListener('dragend', (e) => {
     e.target.style.opacity = '1';
   });
-  pinnedGrid.addEventListener('dragover', (e) => e.preventDefault());
+  pinnedGrid.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    // 清除所有旧标记
+    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.classList.remove('drop-target'));
+    // 标记当前悬停的目标
+    const target = e.target.closest('.tile.pinned');
+    if (target) target.classList.add('drop-target');
+  });
+  pinnedGrid.addEventListener('dragleave', (e) => {
+    const target = e.target.closest('.tile.pinned');
+    if (target) target.classList.remove('drop-target');
+  });
   pinnedGrid.addEventListener('drop', (e) => {
     e.preventDefault();
+    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.classList.remove('drop-target'));
     const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
     const target = e.target.closest('.tile.pinned');
     if (dragged && target && dragged !== target) {
