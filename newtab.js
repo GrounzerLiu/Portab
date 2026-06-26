@@ -143,31 +143,40 @@ const historyGrid = document.getElementById('historyGrid');
   updateClockDisplay();
   setInterval(updateClockDisplay, 10000);
 
-  // Spotlight hover — capsule distance field, per-element range via CSS
+  // Spotlight hover — capsule distance field, throttled with rAF
+  let spotlightMouseX = 0, spotlightMouseY = 0, spotlightPending = false;
   window.addEventListener('mousemove', (e) => {
-    document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn').forEach(el => {
-      const r = el.getBoundingClientRect();
-      const mx = e.clientX - r.left;
-      const my = e.clientY - r.top;
-      const m = Math.min(r.width, r.height);
+    spotlightMouseX = e.clientX;
+    spotlightMouseY = e.clientY;
+    if (!spotlightPending) {
+      spotlightPending = true;
+      requestAnimationFrame(() => {
+        spotlightPending = false;
+        document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn').forEach(el => {
+          const r = el.getBoundingClientRect();
+          const mx = spotlightMouseX - r.left;
+          const my = spotlightMouseY - r.top;
+          const m = Math.min(r.width, r.height);
 
-      let distToAxis;
-      if (r.width > r.height) {
-        const ax = Math.max(m/2, Math.min(mx, r.width - m/2));
-        distToAxis = Math.hypot(mx - ax, my - m/2);
-      } else {
-        const ay = Math.max(m/2, Math.min(my, r.height - m/2));
-        distToAxis = Math.hypot(mx - m/2, my - ay);
-      }
+          let distToAxis;
+          if (r.width > r.height) {
+            const ax = Math.max(m/2, Math.min(mx, r.width - m/2));
+            distToAxis = Math.hypot(mx - ax, my - m/2);
+          } else {
+            const ay = Math.max(m/2, Math.min(my, r.height - m/2));
+            distToAxis = Math.hypot(mx - m/2, my - ay);
+          }
 
-      const glowDist = distToAxis - m/2;
-      const range = parseFloat(getComputedStyle(el).getPropertyValue('--spotlight-range')) || 260;
-      const glow = Math.min(1, Math.max(0, 1 - glowDist / range));
+          const glowDist = distToAxis - m/2;
+          const range = parseFloat(getComputedStyle(el).getPropertyValue('--spotlight-range')) || 260;
+          const glow = Math.min(1, Math.max(0, 1 - glowDist / range));
 
-      el.style.setProperty('--x', mx + 'px');
-      el.style.setProperty('--y', my + 'px');
-      el.style.setProperty('--glow', glow.toFixed(3));
-    });
+          el.style.setProperty('--x', mx + 'px');
+          el.style.setProperty('--y', my + 'px');
+          el.style.setProperty('--glow', glow.toFixed(3));
+        });
+      });
+    }
   });
   window.addEventListener('mouseout', (e) => {
     if (!e.relatedTarget) {
