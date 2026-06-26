@@ -143,7 +143,7 @@ body.ready { opacity: 1; }
 }
 /* 按钮边框光 — 不受 ::after opacity 影响 */
 .refresh-wallpaper-btn {
-  box-shadow: 0 0 0 1px rgba(255,255,255, calc(var(--glow) * 0.5));
+  box-shadow: 0 0 0 1px rgba(255,255,255, calc(var(--glow) * 0.25));
 }
 .refresh-wallpaper-btn.spinning svg { animation: refresh-spin .8s ease-out; }
 @keyframes refresh-spin {
@@ -203,7 +203,7 @@ body.ready { opacity: 1; }
 }
 /* 按钮边框光 — 不受 ::after opacity 影响 */
 .settings-btn {
-  box-shadow: 0 0 0 1px rgba(255,255,255, calc(var(--glow) * 0.5));
+  box-shadow: 0 0 0 1px rgba(255,255,255, calc(var(--glow) * 0.25));
 }
 
 /* ===== Search ===== */
