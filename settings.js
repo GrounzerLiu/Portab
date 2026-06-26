@@ -638,7 +638,8 @@ async function setWallpaper(mode) {
     picsumUrl = generatePicsumUrl();
   }
   if (mode === 'nasa' && !nasaUrl) {
-    fetchNasaApod().then(() => { saveAll(); applyWallpaper(); tryAutoExtract(); });
+    await fetchNasaApod();
+    if (nasaUrl) { await saveAll(); applyWallpaper(); tryAutoExtract(); }
   }
 
   await saveAll();
@@ -737,7 +738,7 @@ async function loadWallpaperCached() {
     'blurEnabled', 'blurAmount', 'autoExtractColor',
   ]);
 
-  if (result.wallpaper && ['none', 'bing', 'picsum', 'custom'].includes(result.wallpaper)) {
+  if (result.wallpaper && ['none', 'bing', 'picsum', 'nasa', 'custom'].includes(result.wallpaper)) {
     currentWallpaper = result.wallpaper;
   }
   if (result.customWallpaperUrl) customWallpaperUrl = result.customWallpaperUrl;
