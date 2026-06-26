@@ -365,7 +365,7 @@ body.has-wallpaper .clock-date {
   transition: box-shadow .2s;
 }
 .search-input:focus {
-  box-shadow: 0 0 0 2px var(--accent);
+  box-shadow: none;
 }
 
 /* Animated placeholder — moves from center to left */
