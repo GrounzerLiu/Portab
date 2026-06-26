@@ -571,7 +571,7 @@ function createTile(item, isPinned) {
   // Hide button (ignore list)
   const hideBtn = document.createElement('button');
   hideBtn.className = 'tile-hide';
-  hideBtn.textContent = '✕';
+  hideBtn.innerHTML = I.close;
   hideBtn.title = '不在主页显示';
   hideBtn.addEventListener('click', (e) => {
     e.preventDefault();
