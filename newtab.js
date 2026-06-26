@@ -72,28 +72,30 @@ const historyGrid = document.getElementById('historyGrid');
   });
 
   function updateDropPlaceholder(mx, my) {
-    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')];
     let ph = document.getElementById('dropPlaceholder');
     if (!ph) {
       ph = document.createElement('div');
       ph.id = 'dropPlaceholder';
-      ph.style.cssText = 'height:3px;background:var(--accent);border-radius:2px;margin:4px 0;grid-column:1/-1;pointer-events:none;transition:none;';
+      ph.style.cssText = 'position:absolute;width:2px;background:var(--accent);border-radius:1px;pointer-events:none;z-index:10;transition:top .1s ease-out;box-shadow:0 0 6px var(--accent);';
+      pinnedGrid.style.position = pinnedGrid.style.position || 'relative';
       pinnedGrid.appendChild(ph);
     }
-    // 找到鼠标最近的两个卡片之间的位置
-    let insertBefore = null;
+    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')];
+    const gridRect = pinnedGrid.getBoundingClientRect();
+    // 默认放最后
+    let refTop = gridRect.bottom - gridRect.top;
+    let refLeft = 0;
     for (const tile of tiles) {
       const rect = tile.getBoundingClientRect();
       if (my < rect.top + rect.height / 2) {
-        insertBefore = tile;
+        refTop = rect.top - gridRect.top;
+        refLeft = rect.left - gridRect.left;
         break;
       }
     }
-    if (insertBefore) {
-      pinnedGrid.insertBefore(ph, insertBefore);
-    } else {
-      pinnedGrid.appendChild(ph);
-    }
+    ph.style.top = (refTop - 1) + 'px';
+    ph.style.left = refLeft + 'px';
+    ph.style.height = '40px';
   }
   pinnedGrid.addEventListener('dragover', (e) => {
     e.preventDefault();
@@ -108,18 +110,30 @@ const historyGrid = document.getElementById('historyGrid');
     e.preventDefault();
     const ph = document.getElementById('dropPlaceholder');
     const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
-    if (dragged && ph) {
-      pinnedGrid.insertBefore(dragged, ph);
-      if (ph) ph.remove();
-      // Rebuild pinnedData in DOM order
-      const newPinned = [];
-      pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => {
-        const url = t.getAttribute('href');
-        if (pinnedData.has(url)) newPinned.push(pinnedData.get(url));
-      });
-      pinnedData = new Map(newPinned.map(v => [v.url, v]));
-      savePinned();
+    if (!dragged || !ph) return;
+    // 根据占位条的 top 位置找到插入点
+    const phTop = parseFloat(ph.style.top);
+    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
+    let inserted = false;
+    for (const tile of tiles) {
+      const rect = tile.getBoundingClientRect();
+      const tileTop = rect.top - pinnedGrid.getBoundingClientRect().top;
+      if (phTop < tileTop + rect.height / 2) {
+        pinnedGrid.insertBefore(dragged, tile);
+        inserted = true;
+        break;
+      }
     }
+    if (!inserted) pinnedGrid.appendChild(dragged);
+    if (ph) ph.remove();
+    // Rebuild pinnedData in DOM order
+    const newPinned = [];
+    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => {
+      const url = t.getAttribute('href');
+      if (pinnedData.has(url)) newPinned.push(pinnedData.get(url));
+    });
+    pinnedData = new Map(newPinned.map(v => [v.url, v]));
+    savePinned();
   });
 
   // Search box focus state
