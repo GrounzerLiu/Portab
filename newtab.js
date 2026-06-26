@@ -566,43 +566,64 @@ function createTile(item, isPinned) {
   return tile;
 }
 
-// pinnedGrid drop handler
+// pinnedGrid drop handler — drag to reorder with preview
+let dragPlaceholder = null;
+
 pinnedGrid.addEventListener('dragover', (e) => {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
+  
+  const dragging = document.querySelector('#pinnedGrid .tile.dragging');
+  if (!dragging) return;
+  
+  // Find the tile we're hovering over (skip the dragging tile)
+  const target = e.target.closest('#pinnedGrid .tile:not(.dragging)');
+  
+  // Remove old placeholder
+  if (dragPlaceholder) dragPlaceholder.remove();
+  
+  if (target) {
+    const rect = target.getBoundingClientRect();
+    const midX = rect.left + rect.width / 2;
+    dragPlaceholder = document.createElement('div');
+    dragPlaceholder.className = 'tile tile-placeholder';
+    dragPlaceholder.style.cssText = `width:${rect.width}px;height:${rect.height}px;border:2px dashed var(--accent);border-radius:12px;background:color-mix(in srgb,var(--accent) 15%,transparent);box-sizing:border-box;`;
+    if (e.clientX < midX) {
+      target.before(dragPlaceholder);
+    } else {
+      target.after(dragPlaceholder);
+    }
+  }
 });
+
+pinnedGrid.addEventListener('dragleave', (e) => {
+  // Only remove placeholder when truly leaving the grid
+  if (!pinnedGrid.contains(e.relatedTarget) && dragPlaceholder) {
+    dragPlaceholder.remove();
+    dragPlaceholder = null;
+  }
+});
+
 pinnedGrid.addEventListener('drop', async (e) => {
   e.preventDefault();
   const url = e.dataTransfer.getData('text/plain');
   if (!url || !pinnedUrls.has(url)) return;
   
-  const dragging = document.querySelector('#pinnedGrid .tile.dragging');
-  // Find the tile at drop position
-  const dropTarget = e.target.closest('#pinnedGrid .tile');
-  
-  const items = Array.from(pinnedData.values());
-  const draggedItem = pinnedData.get(url);
-  const dropIndex = dropTarget 
-    ? items.findIndex(it => it.url === dropTarget.href)
-    : items.length;
-  const dragIndex = items.findIndex(it => it.url === url);
-  
-  if (dragIndex === -1 || dragIndex === dropIndex) return;
-  
-  // Reorder
-  items.splice(dragIndex, 1);
-  items.splice(dropIndex > dragIndex ? dropIndex - 1 : dropIndex, 0, draggedItem);
-  
-  // Rebuild pinnedData Map in new order
-  pinnedData.clear();
-  pinnedUrls.clear();
-  for (const item of items) {
-    pinnedData.set(item.url, item);
-    pinnedUrls.add(item.url);
+  if (dragPlaceholder) {
+    dragPlaceholder.after(document.querySelector(`#pinnedGrid .tile.dragging`));
+    dragPlaceholder.remove();
+    dragPlaceholder = null;
   }
   
+  // Update pinnedData order from DOM
+  const orderedUrls = [...pinnedGrid.querySelectorAll('.tile:not(.tile-placeholder)')].map(t => t.href);
+  const newPinned = new Map();
+  for (const u of orderedUrls) {
+    if (pinnedData.has(u)) newPinned.set(u, pinnedData.get(u));
+  }
+  pinnedData = newPinned;
+  pinnedUrls = new Set(newPinned.keys());
   await savePinned();
-  renderPinned();
 });
 
 // ===== Pin / Unpin =====
