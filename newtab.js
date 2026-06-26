@@ -143,23 +143,31 @@ const historyGrid = document.getElementById('historyGrid');
   updateClockDisplay();
   setInterval(updateClockDisplay, 10000);
 
-  // Spotlight hover — global mousemove updates all tiles
+  // Spotlight hover — capsule distance field
   const MAX_SPOTLIGHT = 260;
   window.addEventListener('mousemove', (e) => {
     document.querySelectorAll('.tile, .search-box').forEach(el => {
-      const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-      let glow = Math.max(0, 1 - dist / MAX_SPOTLIGHT);
-      // 鼠标在元素内部时保持最低亮度
-      if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-        glow = Math.max(glow, 0.4);
+      const r = el.getBoundingClientRect();
+      const mx = e.clientX - r.left;
+      const my = e.clientY - r.top;
+      const m = Math.min(r.width, r.height); // shortest side = pill radius
+
+      let distToAxis;
+      if (r.width > r.height) {
+        // Horizontal pill: axis from (m/2, m/2) to (w-m/2, m/2)
+        const ax = Math.max(m/2, Math.min(mx, r.width - m/2));
+        distToAxis = Math.hypot(mx - ax, my - m/2);
+      } else {
+        // Vertical pill: axis from (m/2, m/2) to (m/2, h-m/2)
+        const ay = Math.max(m/2, Math.min(my, r.height - m/2));
+        distToAxis = Math.hypot(mx - m/2, my - ay);
       }
-      el.style.setProperty('--x', x + 'px');
-      el.style.setProperty('--y', y + 'px');
+
+      const glowDist = distToAxis - m/2;
+      const glow = Math.min(1, Math.max(0, 1 - glowDist / MAX_SPOTLIGHT));
+
+      el.style.setProperty('--x', mx + 'px');
+      el.style.setProperty('--y', my + 'px');
       el.style.setProperty('--glow', glow.toFixed(3));
     });
   });
