@@ -56,86 +56,6 @@ const historyGrid = document.getElementById('historyGrid');
   autoAnimate(pinnedGrid, { duration: 200 });
   autoAnimate(historyGrid, { duration: 200 });
 
-  // Drag-and-drop reorder within pinned grid (native draggable API)
-  pinnedGrid.addEventListener('dragstart', (e) => {
-    if (!e.target.classList.contains('tile') || !e.target.classList.contains('pinned')) {
-      e.preventDefault();
-      return;
-    }
-    e.target.style.opacity = '0.4';
-    e.dataTransfer.effectAllowed = 'move';
-  });
-  pinnedGrid.addEventListener('dragend', (e) => {
-    e.target.style.opacity = '1';
-    const ph = document.getElementById('dropPlaceholder');
-    if (ph) ph.remove();
-  });
-
-  function updateDropPlaceholder(mx, my) {
-    let ph = document.getElementById('dropPlaceholder');
-    if (!ph) {
-      ph = document.createElement('div');
-      ph.id = 'dropPlaceholder';
-      ph.style.cssText = 'position:absolute;width:2px;background:var(--accent);border-radius:1px;pointer-events:none;z-index:10;transition:top .1s ease-out;box-shadow:0 0 6px var(--accent);';
-      pinnedGrid.style.position = pinnedGrid.style.position || 'relative';
-      pinnedGrid.appendChild(ph);
-    }
-    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')];
-    const gridRect = pinnedGrid.getBoundingClientRect();
-    // 默认放最后
-    let refTop = gridRect.bottom - gridRect.top;
-    let refLeft = 0;
-    for (const tile of tiles) {
-      const rect = tile.getBoundingClientRect();
-      if (my < rect.top + rect.height / 2) {
-        refTop = rect.top - gridRect.top;
-        refLeft = rect.left - gridRect.left;
-        break;
-      }
-    }
-    ph.style.top = (refTop - 1) + 'px';
-    ph.style.left = refLeft + 'px';
-    ph.style.height = '40px';
-  }
-  pinnedGrid.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    // 计算放置位置并显示独立占位条
-    updateDropPlaceholder(e.clientX, e.clientY);
-  });
-  pinnedGrid.addEventListener('dragleave', () => {
-    const ph = document.getElementById('dropPlaceholder');
-    if (ph) ph.remove();
-  });
-  pinnedGrid.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const ph = document.getElementById('dropPlaceholder');
-    const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
-    if (!dragged || !ph) return;
-    // 根据占位条的 top 位置找到插入点
-    const phTop = parseFloat(ph.style.top);
-    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
-    let inserted = false;
-    for (const tile of tiles) {
-      const rect = tile.getBoundingClientRect();
-      const tileTop = rect.top - pinnedGrid.getBoundingClientRect().top;
-      if (phTop < tileTop + rect.height / 2) {
-        pinnedGrid.insertBefore(dragged, tile);
-        inserted = true;
-        break;
-      }
-    }
-    if (!inserted) pinnedGrid.appendChild(dragged);
-    if (ph) ph.remove();
-    // Rebuild pinnedData in DOM order
-    const newPinned = [];
-    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => {
-      const url = t.getAttribute('href');
-      if (pinnedData.has(url)) newPinned.push(pinnedData.get(url));
-    });
-    pinnedData = new Map(newPinned.map(v => [v.url, v]));
-    savePinned();
-  });
-
   // Search box focus state
   const searchBox = document.querySelector('.search-box');
   const searchPlaceholder = document.getElementById('searchPlaceholder');
@@ -558,7 +478,6 @@ function renderHistory(historyItems) {
 function createTile(item, isPinned) {
   const tile = document.createElement('a');
   tile.className = 'tile' + (isPinned ? ' pinned' : '');
-  if (isPinned) tile.draggable = true;
   tile.href = item.url;
   tile.title = (item.title || '') + '\n' + item.url + (item.visitCount ? `\n访问 ${formatCount(item.visitCount)} 次` : '');
   tile.dataset.visits = item.visitCount || 0;
@@ -658,7 +577,6 @@ async function togglePin(item) {
       const pinBtn = tile.querySelector('.tile-pin');
       if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = '固定到首页'; }
       tile.classList.remove('pinned');
-      tile.draggable = false;
       const historyTiles = historyGrid.querySelectorAll('.tile');
       const historyCount = historyTiles.length;
       if (historyCount >= maxItems && historyCount > 0) {
@@ -681,7 +599,6 @@ async function togglePin(item) {
       const pinBtn = tile.querySelector('.tile-pin');
       if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = '取消固定'; }
       tile.classList.add('pinned');
-      tile.draggable = true;
       pinnedGrid.appendChild(tile);
       fillHistoryGap();
     }
