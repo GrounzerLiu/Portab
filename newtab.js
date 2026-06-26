@@ -80,7 +80,7 @@ const historyGrid = document.getElementById('historyGrid');
       pinnedGrid.style.position = pinnedGrid.style.position || 'relative';
       pinnedGrid.appendChild(ph);
     }
-    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')];
+    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t.style.opacity !== '0.4');
     const gridRect = pinnedGrid.getBoundingClientRect();
     // 默认放最后
     let refTop = gridRect.bottom - gridRect.top;
@@ -99,12 +99,7 @@ const historyGrid = document.getElementById('historyGrid');
   }
   pinnedGrid.addEventListener('dragover', (e) => {
     e.preventDefault();
-    // 计算放置位置并显示独立占位条
     updateDropPlaceholder(e.clientX, e.clientY);
-  });
-  pinnedGrid.addEventListener('dragleave', () => {
-    const ph = document.getElementById('dropPlaceholder');
-    if (ph) ph.remove();
   });
   pinnedGrid.addEventListener('drop', (e) => {
     e.preventDefault();
