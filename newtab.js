@@ -559,60 +559,8 @@ function createTile(item, isPinned) {
   tile.appendChild(pinBtn);
   tile.appendChild(hideBtn);
 
-  // Drag-and-drop for pinned tiles
-  if (isPinned) {
-    tile.draggable = true;
-    tile.addEventListener('dragstart', (e) => {
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', item.url);
-      tile.classList.add('dragging');
-    });
-    tile.addEventListener('dragend', () => {
-      tile.classList.remove('dragging');
-    });
-  }
-
   return tile;
 }
-
-// pinnedGrid drop handler
-pinnedGrid.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-});
-pinnedGrid.addEventListener('drop', async (e) => {
-  e.preventDefault();
-  const url = e.dataTransfer.getData('text/plain');
-  if (!url || !pinnedUrls.has(url)) return;
-  
-  const dragging = document.querySelector('#pinnedGrid .tile.dragging');
-  // Find the tile at drop position
-  const dropTarget = e.target.closest('#pinnedGrid .tile');
-  
-  const items = Array.from(pinnedData.values());
-  const draggedItem = pinnedData.get(url);
-  const dropIndex = dropTarget 
-    ? items.findIndex(it => it.url === dropTarget.href)
-    : items.length;
-  const dragIndex = items.findIndex(it => it.url === url);
-  
-  if (dragIndex === -1 || dragIndex === dropIndex) return;
-  
-  // Reorder
-  items.splice(dragIndex, 1);
-  items.splice(dropIndex > dragIndex ? dropIndex - 1 : dropIndex, 0, draggedItem);
-  
-  // Rebuild pinnedData Map in new order
-  pinnedData.clear();
-  pinnedUrls.clear();
-  for (const item of items) {
-    pinnedData.set(item.url, item);
-    pinnedUrls.add(item.url);
-  }
-  
-  await savePinned();
-  renderPinned();
-});
 
 // ===== Pin / Unpin =====
 async function togglePin(item) {
