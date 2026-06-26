@@ -135,6 +135,7 @@ body.ready { opacity: 1; }
   transition: opacity 0.15s ease;
   pointer-events: none;
   z-index: 1;
+  box-shadow: 0 0 0 1px rgba(255,255,255, calc(var(--glow) * 0.5));
 }
 .refresh-wallpaper-btn:hover { color: var(--text); }
 .refresh-wallpaper-btn:hover::before {
@@ -190,6 +191,7 @@ body.ready { opacity: 1; }
   transition: opacity 0.15s ease;
   pointer-events: none;
   z-index: 1;
+  box-shadow: 0 0 0 1px rgba(255,255,255, calc(var(--glow) * 0.5));
 }
 .settings-btn:hover { color: var(--text); }
 .settings-btn:hover::before {
