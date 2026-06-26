@@ -24,6 +24,7 @@
     "https://fastly.picsum.photos/*",
     "https://api.paugram.com/*",
     "https://api.nasa.gov/*",
+    "https://apod.nasa.gov/*",
     "https://api.faviconkit.com/*"
   ],
   "icons": {
