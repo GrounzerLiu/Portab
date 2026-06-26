@@ -67,33 +67,50 @@ const historyGrid = document.getElementById('historyGrid');
   });
   pinnedGrid.addEventListener('dragend', (e) => {
     e.target.style.opacity = '1';
+    const ph = document.getElementById('dropPlaceholder');
+    if (ph) ph.remove();
   });
+
+  function updateDropPlaceholder(mx, my) {
+    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')];
+    let ph = document.getElementById('dropPlaceholder');
+    if (!ph) {
+      ph = document.createElement('div');
+      ph.id = 'dropPlaceholder';
+      ph.style.cssText = 'height:3px;background:var(--accent);border-radius:2px;margin:4px 0;grid-column:1/-1;pointer-events:none;transition:none;';
+      pinnedGrid.appendChild(ph);
+    }
+    // 找到鼠标最近的两个卡片之间的位置
+    let insertBefore = null;
+    for (const tile of tiles) {
+      const rect = tile.getBoundingClientRect();
+      if (my < rect.top + rect.height / 2) {
+        insertBefore = tile;
+        break;
+      }
+    }
+    if (insertBefore) {
+      pinnedGrid.insertBefore(ph, insertBefore);
+    } else {
+      pinnedGrid.appendChild(ph);
+    }
+  }
   pinnedGrid.addEventListener('dragover', (e) => {
     e.preventDefault();
-    // 清除所有旧标记
-    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.classList.remove('drop-target'));
-    // 标记当前悬停的目标
-    const target = e.target.closest('.tile.pinned');
-    if (target) target.classList.add('drop-target');
+    // 计算放置位置并显示独立占位条
+    updateDropPlaceholder(e.clientX, e.clientY);
   });
-  pinnedGrid.addEventListener('dragleave', (e) => {
-    const target = e.target.closest('.tile.pinned');
-    if (target) target.classList.remove('drop-target');
+  pinnedGrid.addEventListener('dragleave', () => {
+    const ph = document.getElementById('dropPlaceholder');
+    if (ph) ph.remove();
   });
   pinnedGrid.addEventListener('drop', (e) => {
     e.preventDefault();
-    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.classList.remove('drop-target'));
+    const ph = document.getElementById('dropPlaceholder');
     const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
-    const target = e.target.closest('.tile.pinned');
-    if (dragged && target && dragged !== target) {
-      const children = [...pinnedGrid.children];
-      const dragIdx = children.indexOf(dragged);
-      const targetIdx = children.indexOf(target);
-      if (dragIdx < targetIdx) {
-        pinnedGrid.insertBefore(dragged, target.nextSibling);
-      } else {
-        pinnedGrid.insertBefore(dragged, target);
-      }
+    if (dragged && ph) {
+      pinnedGrid.insertBefore(dragged, ph);
+      if (ph) ph.remove();
       // Rebuild pinnedData in DOM order
       const newPinned = [];
       pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => {
