@@ -63,6 +63,7 @@ const historyGrid = document.getElementById('historyGrid');
       ghostClass: 'sortable-ghost',
       chosenClass: 'sortable-chosen',
       draggable: '.tile.pinned',
+      forceFallback: true,
       onEnd(evt) {
         // Rebuild pinnedData in new DOM order
         const order = [];
