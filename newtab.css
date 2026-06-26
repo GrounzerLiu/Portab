@@ -645,6 +645,9 @@ body.has-wallpaper .tile {
 .tile-pin:hover { color: var(--accent); }
 .tile.pinned .tile-pin { opacity: 1; color: var(--accent); }
 .tile.pinned .tile-pin:hover::after { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+/* SortableJS drag ghost & chosen */
+.sortable-ghost { opacity: 0.3; }
+.sortable-chosen { opacity: 0.6; box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
 
 .tile-hide {
   position: absolute; bottom: 2px; right: 6px;

@@ -56,6 +56,26 @@ const historyGrid = document.getElementById('historyGrid');
   autoAnimate(pinnedGrid, { duration: 200 });
   autoAnimate(historyGrid, { duration: 200 });
 
+  // SortableJS drag-and-drop for pinned tiles
+  if (typeof Sortable !== 'undefined') {
+    Sortable.create(pinnedGrid, {
+      animation: 200,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      draggable: '.tile.pinned',
+      onEnd(evt) {
+        // Rebuild pinnedData in new DOM order
+        const order = [];
+        pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => {
+          const url = t.getAttribute('href');
+          if (pinnedData.has(url)) order.push(pinnedData.get(url));
+        });
+        pinnedData = new Map(order.map(v => [v.url, v]));
+        savePinned();
+      },
+    });
+  }
+
   // Search box focus state
   const searchBox = document.querySelector('.search-box');
   const searchPlaceholder = document.getElementById('searchPlaceholder');
