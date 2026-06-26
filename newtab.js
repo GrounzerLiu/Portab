@@ -67,60 +67,55 @@ const historyGrid = document.getElementById('historyGrid');
   });
   pinnedGrid.addEventListener('dragend', (e) => {
     e.target.style.opacity = '1';
-    const ph = document.getElementById('dropPlaceholder');
-    if (ph) ph.remove();
   });
 
-  function updateDropPlaceholder(mx, my) {
-    let ph = document.getElementById('dropPlaceholder');
-    if (!ph) {
-      ph = document.createElement('div');
-      ph.id = 'dropPlaceholder';
-      ph.style.cssText = 'position:absolute;width:2px;background:var(--accent);border-radius:1px;pointer-events:none;z-index:10;transition:top .1s ease-out;box-shadow:0 0 6px var(--accent);';
-      pinnedGrid.style.position = pinnedGrid.style.position || 'relative';
-      pinnedGrid.appendChild(ph);
-    }
-    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t.style.opacity !== '0.4');
-    const gridRect = pinnedGrid.getBoundingClientRect();
-    // 默认放最后
-    let refTop = gridRect.bottom - gridRect.top;
-    let refLeft = 0;
-    for (const tile of tiles) {
-      const rect = tile.getBoundingClientRect();
-      if (my < rect.top + rect.height / 2) {
-        refTop = rect.top - gridRect.top;
-        refLeft = rect.left - gridRect.left;
-        break;
-      }
-    }
-    ph.style.top = (refTop - 1) + 'px';
-    ph.style.left = refLeft + 'px';
-    ph.style.height = '40px';
-  }
   pinnedGrid.addEventListener('dragover', (e) => {
     e.preventDefault();
-    updateDropPlaceholder(e.clientX, e.clientY);
-  });
-  pinnedGrid.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const ph = document.getElementById('dropPlaceholder');
+    const target = e.target.closest('.tile.pinned');
     const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
-    if (!dragged || !ph) return;
-    // 根据占位条的 top 位置找到插入点
-    const phTop = parseFloat(ph.style.top);
-    const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
-    let inserted = false;
-    for (const tile of tiles) {
-      const rect = tile.getBoundingClientRect();
-      const tileTop = rect.top - pinnedGrid.getBoundingClientRect().top;
-      if (phTop < tileTop + rect.height / 2) {
-        pinnedGrid.insertBefore(dragged, tile);
-        inserted = true;
-        break;
+    if (!dragged) return;
+    // 清除所有旧高亮
+    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.style.boxShadow = '');
+    // 根据鼠标在目标卡片的上半/下半决定插入位置
+    if (target && target !== dragged) {
+      const rect = target.getBoundingClientRect();
+      if (e.clientY < rect.top + rect.height / 2) {
+        target.style.boxShadow = 'inset 3px 0 0 var(--accent)';
+      } else {
+        target.style.boxShadow = 'inset -3px 0 0 var(--accent)';
+      }
+    } else if (!target) {
+      // 鼠标不在任何卡片上
+      const tiles = [...pinnedGrid.querySelectorAll('.tile.pinned')].filter(t => t !== dragged);
+      if (tiles.length > 0) {
+        const last = tiles[tiles.length - 1];
+        last.style.boxShadow = 'inset -3px 0 0 var(--accent)';
       }
     }
-    if (!inserted) pinnedGrid.appendChild(dragged);
-    if (ph) ph.remove();
+  });
+
+  pinnedGrid.addEventListener('dragleave', (e) => {
+    const tile = e.target.closest('.tile.pinned');
+    if (tile) tile.style.boxShadow = '';
+  });
+
+  pinnedGrid.addEventListener('drop', (e) => {
+    e.preventDefault();
+    pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => t.style.boxShadow = '');
+    const dragged = pinnedGrid.querySelector('.tile.pinned[style*="opacity: 0.4"]');
+    if (!dragged) return;
+    const target = e.target.closest('.tile.pinned');
+    if (target && target !== dragged) {
+      const rect = target.getBoundingClientRect();
+      if (e.clientY < rect.top + rect.height / 2) {
+        pinnedGrid.insertBefore(dragged, target);
+      } else {
+        pinnedGrid.insertBefore(dragged, target.nextSibling);
+      }
+    } else {
+      // 放末尾
+      pinnedGrid.appendChild(dragged);
+    }
     // Rebuild pinnedData in DOM order
     const newPinned = [];
     pinnedGrid.querySelectorAll('.tile.pinned').forEach(t => {
