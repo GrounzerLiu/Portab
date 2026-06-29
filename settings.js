@@ -264,6 +264,8 @@ function initSettings() {
       rebuildEngineDropdown();
     });
   }
+
+  initClockEvents();
 }
 
 function updateSliderTrack(slider) {
@@ -323,13 +325,21 @@ function applyTheme(theme) {
   themeBtns.forEach(btn => {
     btn.setAttribute('aria-checked', btn.dataset.themeOpt === theme ? 'true' : 'false');
   });
+}
 
-  // ==== Clock settings ====
+// 一次性注册时钟设置事件（移到 applyTheme 外部，避免重复绑定）
+function initClockEvents() {
   const clockFontSizeInp = document.getElementById('clockFontSizeSlider');
   const clockFontSizeVal = document.getElementById('clockFontSizeVal');
   const clockFormatBtns = document.querySelectorAll('.seg-btn[data-clock-format]');
-  
-  if (clockFontSizeInp) {
+  const clockFontFamily = document.getElementById('clockFontFamily');
+  const clockWeightBtns = document.querySelectorAll('.seg-btn[data-clock-weight]');
+  const clockMarginTopInp = document.getElementById('clockMarginTopSlider');
+  const clockMarginTopVal = document.getElementById('clockMarginTopVal');
+  const clockMarginBottomInp = document.getElementById('clockMarginBottomSlider');
+  const clockMarginBottomVal = document.getElementById('clockMarginBottomVal');
+
+  if (clockFontSizeInp && clockFontSizeVal) {
     clockFontSizeInp.addEventListener('ms-change', (e) => {
       const v = Math.round(e.detail.value);
       clockFontSizeVal.textContent = v + 'px';
@@ -347,11 +357,6 @@ function applyTheme(theme) {
       });
     });
   }
-
-  // ==== Clock font ====
-  const clockFontFamily = document.getElementById('clockFontFamily');
-  const clockWeightBtns = document.querySelectorAll('.seg-btn[data-clock-weight]');
-  
   if (clockFontFamily) {
     clockFontFamily.addEventListener('change', () => {
       document.querySelector('.clock-time').style.setProperty('--clock-font', clockFontFamily.value === 'inherit' ? '' : clockFontFamily.value);
@@ -369,14 +374,7 @@ function applyTheme(theme) {
       });
     });
   }
-  
-  // Clock margins
-  const clockMarginTopInp = document.getElementById('clockMarginTopSlider');
-  const clockMarginTopVal = document.getElementById('clockMarginTopVal');
-  const clockMarginBottomInp = document.getElementById('clockMarginBottomSlider');
-  const clockMarginBottomVal = document.getElementById('clockMarginBottomVal');
-
-  if (clockMarginTopInp) {
+  if (clockMarginTopInp && clockMarginTopVal) {
     clockMarginTopInp.addEventListener('ms-change', (e) => {
       const v = Math.round(e.detail.value);
       clockMarginTopVal.textContent = v + 'px';
@@ -384,7 +382,7 @@ function applyTheme(theme) {
       chrome.storage.local.set({ clockMarginTop: v });
     });
   }
-  if (clockMarginBottomInp) {
+  if (clockMarginBottomInp && clockMarginBottomVal) {
     clockMarginBottomInp.addEventListener('ms-change', (e) => {
       const v = Math.round(e.detail.value);
       clockMarginBottomVal.textContent = v + 'px';

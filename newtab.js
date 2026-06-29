@@ -271,6 +271,19 @@ const historyGrid = document.getElementById('historyGrid');
     window.addEventListener('resize', updateLayout);
   })();
 
+  // 缓存 spotlight 目标元素（卡片、搜索框等），卡片变化后刷新
+  var _spotlightEls = null;
+  function _getSpotlightEls() {
+    if (!_spotlightEls) _spotlightEls = document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn');
+    return _spotlightEls;
+  }
+  function _refreshSpotlightEls() { _spotlightEls = null; }
+  // renderAll 和 togglePin 等会改变卡片 DOM，结束后刷新缓存
+  var _origRenderAll = renderAll;
+  renderAll = function() { return _origRenderAll().then(function() { _refreshSpotlightEls(); }); };
+  var _origTogglePin = togglePin;
+  togglePin = function(item) { _refreshSpotlightEls(); return _origTogglePin(item); };
+
   // Spotlight hover — capsule distance field, throttled with rAF
   function spotlightOne(el, mx, my) {
     const r = el.getBoundingClientRect();
@@ -293,7 +306,7 @@ const historyGrid = document.getElementById('historyGrid');
     el.style.setProperty('--glow', glow.toFixed(3));
   }
   function spotlightAll(mx, my) {
-    document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn').forEach(el => spotlightOne(el, mx, my));
+    _getSpotlightEls().forEach(el => spotlightOne(el, mx, my));
   }
 
   let spotlightMouseX = 0, spotlightMouseY = 0, spotlightPending = false;
@@ -310,7 +323,7 @@ const historyGrid = document.getElementById('historyGrid');
   });
   window.addEventListener('mouseout', (e) => {
     if (!e.relatedTarget) {
-      document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn').forEach(el => el.style.setProperty('--glow', '0'));
+      _getSpotlightEls().forEach(el => el.style.setProperty('--glow', '0'));
     }
   });
 
