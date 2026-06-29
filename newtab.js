@@ -171,14 +171,10 @@ const historyGrid = document.getElementById('historyGrid');
       var h12 = h % 12 || 12;
       timeStr = ampm + ' ' + h12 + ':' + m;
     }
-    document.getElementById('clockTime').dataset.text = timeStr;
-    var span = document.querySelector('#clockTime span');
+    var ct = document.getElementById('clockTime');
+    var span = ct.querySelector('span');
     if (span) span.textContent = timeStr;
-    // Sync SVG edge text
-    var edgeText = document.getElementById('edgeText');
-    if (edgeText) edgeText.textContent = timeStr;
-    var clipText = document.getElementById('clipText');
-    if (clipText) clipText.textContent = timeStr;
+    ct.dataset.text = timeStr;
     document.getElementById('clockDate').textContent = 
       now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 星期' +
       ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
@@ -188,11 +184,10 @@ const historyGrid = document.getElementById('historyGrid');
   updateClockDisplay();
   setInterval(updateClockDisplay, 10000);
 
-  // ===== Clock layout & glass effect =====
-  (function initClockGlass() {
+  (function() {
     var wrapEl = document.getElementById('clockWrap');
     var timeEl = document.getElementById('clockTime');
-    var spanEl = timeEl ? timeEl.querySelector('span') : null;
+    var spanEl = timeEl.querySelector('span');
     var glassEl = document.getElementById('glassBlur');
     var clipText = document.getElementById('clipText');
     var edgeSvg = document.getElementById('edgeSvg');
@@ -200,66 +195,78 @@ const historyGrid = document.getElementById('historyGrid');
     var edgeGrad = document.getElementById('edgeGrad');
 
     function updateLayout() {
-      if (!wrapEl || !spanEl) return;
       var rect = wrapEl.getBoundingClientRect();
       var w = rect.width, h = rect.height;
-      if (w === 0 || h === 0) return;
       var cs = getComputedStyle(spanEl);
 
+      var ls = cs.letterSpacing;
       // SVG clipPath
       var svgEl = document.getElementById('clipSvg');
       if (svgEl) {
         svgEl.setAttribute('width', w);
         svgEl.setAttribute('height', h);
-        svgEl.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
         clipText.setAttribute('x', w / 2);
         clipText.setAttribute('y', h / 2);
         clipText.setAttribute('font-size', parseFloat(cs.fontSize));
         clipText.setAttribute('font-weight', cs.fontWeight);
         clipText.setAttribute('font-family', cs.fontFamily);
-        clipText.setAttribute('letter-spacing', cs.letterSpacing);
+        clipText.setAttribute('letter-spacing', ls);
+        clipText.textContent = spanEl.textContent;
         glassEl.style.clipPath = 'url(#textClip)';
         glassEl.style.webkitClipPath = 'url(#textClip)';
       }
 
       // Edge SVG
-      var fs = parseFloat(cs.fontSize);
-      edgeSvg.setAttribute('width', w);
-      edgeSvg.setAttribute('height', h);
-      edgeSvg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-      edgeText.setAttribute('x', w / 2);
-      edgeText.setAttribute('y', h / 2);
-      edgeText.setAttribute('font-size', fs);
-      edgeText.setAttribute('font-weight', cs.fontWeight);
-      edgeText.setAttribute('font-family', cs.fontFamily);
-      edgeText.setAttribute('letter-spacing', cs.letterSpacing);
+      if (edgeSvg) {
+        edgeSvg.setAttribute('width', w);
+        edgeSvg.setAttribute('height', h);
+        edgeSvg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+        edgeText.setAttribute('x', w / 2);
+        edgeText.setAttribute('y', h / 2);
+        edgeText.setAttribute('font-size', parseFloat(cs.fontSize));
+        edgeText.setAttribute('font-weight', cs.fontWeight);
+        edgeText.setAttribute('font-family', cs.fontFamily);
+        edgeText.setAttribute('letter-spacing', ls);
+        edgeText.textContent = spanEl.textContent;
+      }
+
+      // 同步 mask 中的文字
+      var maskText = document.getElementById('maskText');
+      if (maskText) {
+        maskText.setAttribute('x', w / 2);
+        maskText.setAttribute('y', h / 2);
+        maskText.setAttribute('font-size', parseFloat(cs.fontSize));
+        maskText.setAttribute('font-weight', cs.fontWeight);
+        maskText.setAttribute('font-family', cs.fontFamily);
+        maskText.setAttribute('letter-spacing', ls);
+        maskText.textContent = spanEl.textContent;
+      }
     }
 
-    // Mouse tracking for light glow
+    updateLayout();
+    window.updateClockLayout = updateLayout;
+    requestAnimationFrame(updateLayout);
+
     var lx = 0, ly = 0, aid = 0;
-    function trackMouse() {
-      var r = timeEl.getBoundingClientRect();
+    function tick() {
+      var r = wrapEl.getBoundingClientRect();
       timeEl.style.setProperty('--x', (lx - r.left) + 'px');
       timeEl.style.setProperty('--y', (ly - r.top) + 'px');
-      aid = requestAnimationFrame(trackMouse);
+
+      var cx = ((lx - r.left) / r.width * 100).toFixed(2);
+      var cy = ((ly - r.top) / r.height * 100).toFixed(2);
+      edgeGrad.setAttribute('cx', cx + '%');
+      edgeGrad.setAttribute('cy', cy + '%');
+
+      aid = requestAnimationFrame(tick);
     }
-    document.addEventListener('mousemove', function(e) {
+    window.addEventListener('mousemove', function(e) {
       lx = e.clientX; ly = e.clientY;
-      if (!aid) aid = requestAnimationFrame(trackMouse);
+      if (!aid) aid = requestAnimationFrame(tick);
     });
-    document.addEventListener('mouseout', function(e) {
+    window.addEventListener('mouseout', function(e) {
       if (!e.relatedTarget) { cancelAnimationFrame(aid); aid = 0; }
     });
-
-    window.updateClockLayout = updateLayout;
-    // Also re-layout when fonts load
-    if (document.fonts) {
-      document.fonts.ready.then(updateLayout);
-    }
-
-    // Initial layout after fonts/style settle
-    setTimeout(updateLayout, 50);
-    setTimeout(updateLayout, 300);
     window.addEventListener('resize', updateLayout);
   })();
 
@@ -617,9 +624,34 @@ function createTile(item, isPinned) {
 
   // Try cached favicon first; fall back to live resolution
   const hostname = item.hostname;
+
+  function tryWebFallback() {
+    const img = document.createElement('img');
+    var urls = [];
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+      urls.push(chrome.runtime.getURL('_favicon/') + '?pageUrl=' + encodeURIComponent('https://' + hostname + '/') + '&size=32');
+    }
+    urls.push(item.favicon || faviconUrl(hostname));
+    urls.push.apply(urls, faviconFallbackChain(hostname));
+    var tried = 0;
+    img.src = urls[0];
+    img.onerror = function() {
+      tried++;
+      if (tried < urls.length) {
+        img.src = urls[tried];
+        return;
+      }
+      img.style.display = 'none';
+      const fallback = document.createElement('div');
+      fallback.className = 'fallback';
+      fallback.textContent = (hostname || item.title || '?')[0].toUpperCase();
+      iconDiv.appendChild(fallback);
+    };
+    iconDiv.appendChild(img);
+  }
+
   if (window.FaviconCache) {
-    const origin = item.url && (new URL(item.url)).origin;
-    window.FaviconCache.resolveFavicon(hostname, origin || item.url).then(url => {
+    window.FaviconCache.resolveFavicon(hostname, item.url).then(url => {
       if (url) {
         const img = document.createElement('img');
         img.src = url;
@@ -632,32 +664,11 @@ function createTile(item, isPinned) {
         };
         iconDiv.appendChild(img);
       } else {
-        // No favicon found, show letter
-        const fallback = document.createElement('div');
-        fallback.className = 'fallback';
-        fallback.textContent = (hostname || item.title || '?')[0].toUpperCase();
-        iconDiv.appendChild(fallback);
+        tryWebFallback();
       }
     });
   } else {
-    // Fallback: use old logic
-    const img = document.createElement('img');
-    img.src = item.favicon || faviconUrl(hostname);
-    let triedFallback = 0;
-    img.onerror = () => {
-      triedFallback++;
-      const fallbacks = faviconFallbackChain(hostname);
-      if (triedFallback <= fallbacks.length) {
-        img.src = fallbacks[triedFallback - 1];
-        return;
-      }
-      img.style.display = 'none';
-      const fallback = document.createElement('div');
-      fallback.className = 'fallback';
-      fallback.textContent = (hostname || item.title || '?')[0].toUpperCase();
-      iconDiv.appendChild(fallback);
-    };
-    iconDiv.appendChild(img);
+    tryWebFallback();
   }
 
   const label = document.createElement('span');

@@ -31,27 +31,39 @@
   </button>
 
   <div class="container">
+    <svg class="clip-svg" id="clipSvg">
+      <defs>
+        <clipPath id="textClip" clipPathUnits="userSpaceOnUse">
+          <text id="clipText" x="0" y="0" text-anchor="middle" dominant-baseline="central"
+                font-family="inherit" font-size="72px" font-weight="200"
+                letter-spacing="-2px" fill="white">00:00</text>
+        </clipPath>
+      </defs>
+    </svg>
     <!-- 搜索框 -->
     <div id="clock" class="clock">
-      <div id="clockWrap" class="clock-wrap">
-        <svg aria-hidden="true" id="clipSvg" class="clip-svg">
+      <div class="clock-time-wrap" id="clockWrap">
+        <div class="glass-blur" id="glassBlur"></div>
+        <div class="clock-time" id="clockTime" data-text="00:00"><span>00:00</span></div>
+        <svg class="edge-svg" id="edgeSvg" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <clipPath id="textClip">
-              <text id="clipText" x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-family="inherit" font-size="72px" font-weight="200" letter-spacing="-2px" fill="white">00:00</text>
-            </clipPath>
+            <radialGradient id="edgeGrad" cx="50%" cy="50%" r="70%">
+              <stop offset="0%" stop-color="white" stop-opacity="0.9"/>
+              <stop offset="20%" stop-color="white" stop-opacity="0.6"/>
+              <stop offset="50%" stop-color="white" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="white" stop-opacity="0"/>
+            </radialGradient>
+            <mask id="outerMask">
+              <rect width="100%" height="100%" fill="white"/>
+              <text id="maskText" x="0" y="0" text-anchor="middle" dominant-baseline="central"
+                    fill="black" font-family="inherit" font-size="72px" font-weight="200"
+                    letter-spacing="-2px">00:00</text>
+            </mask>
           </defs>
-        </svg>
-        <div id="glassBlur" class="glass-blur"></div>
-        <div class="clock-time" id="clockTime"><span>00:00</span></div>
-        <svg id="edgeSvg" class="edge-svg" viewBox="0 0 1 1" width="1" height="1">
-          <defs>
-            <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
-              <stop offset="50%" stop-color="rgba(255,255,255,0.6)"/>
-              <stop offset="100%" stop-color="rgba(255,255,255,0.2)"/>
-            </linearGradient>
-          </defs>
-          <text id="edgeText" x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="none" stroke="url(#edgeGrad)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" font-family="inherit" font-size="72px" font-weight="200" letter-spacing="-2px">00:00</text>
+          <text id="edgeText" x="0" y="0" text-anchor="middle" dominant-baseline="central"
+                fill="none" stroke="url(#edgeGrad)" stroke-width="3" mask="url(#outerMask)"
+                font-family="inherit" font-size="72px" font-weight="200"
+                letter-spacing="-2px">00:00</text>
         </svg>
       </div>
       <div class="clock-date" id="clockDate">---</div>

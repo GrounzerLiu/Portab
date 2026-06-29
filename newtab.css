@@ -208,40 +208,31 @@ body.ready { opacity: 1; }
 
 /* ===== Search ===== */
 .clock {
-  text-align: center;
+  position: relative; text-align: center; user-select: none;
   margin-bottom: var(--clock-mb, 24px);
   margin-top: var(--clock-mt, 0px);
-  user-select: none;
-  position: relative;
 }
-.clock-wrap {
-  position: relative;
-  display: inline-block;
-}
+.clock-time-wrap { position: relative; display: inline-block; }
 .clock-time {
+  position: relative;
   font-family: var(--clock-font, inherit);
   font-size: var(--clock-font-size, 72px);
   font-weight: var(--clock-weight, 200);
-  letter-spacing: -2px;
+  line-height: 1; letter-spacing: -2px;
   color: transparent;
-  line-height: 1;
 }
-.clock-time > span {
-  position: relative;
-  z-index: 1;
-  color: rgba(255,255,255,0.22);
+.glass-blur {
+  position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  pointer-events: none; z-index: 0;
 }
-body:not(.has-wallpaper) .clock-time > span {
-  color: var(--text);
-}
-/* 光照层 */
 .clock-time::after {
   content: attr(data-text);
   position: absolute; left: 0; top: 0; width: 100%; height: 100%;
   font-family: var(--clock-font, inherit);
   font-size: var(--clock-font-size, 72px);
   font-weight: var(--clock-weight, 200);
-  letter-spacing: -2px;
+  line-height: 1; letter-spacing: -2px;
   background: radial-gradient(350px circle at var(--x, 50%) var(--y, 50%),
     rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 30%,
     rgba(255,255,255,0.04) 55%, transparent 70%);
@@ -249,28 +240,24 @@ body:not(.has-wallpaper) .clock-time > span {
   background-clip: text;
   pointer-events: none; z-index: 2;
 }
-.glass-blur {
-  position: absolute; left: 0; top: 0; right: 0; bottom: 0;
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  background: color-mix(in srgb, var(--card-bg, var(--surface)) 55%, transparent);
-  pointer-events: none; z-index: 0;
+.clock-time > span {
+  position: relative; z-index: 1;
+  color: rgba(255,255,255,0.22);
+}
+body:not(.has-wallpaper) .clock-time > span {
+  color: var(--text);
 }
 .edge-svg {
   position: absolute; left: 0; top: 0;
   pointer-events: none; z-index: 3;
   overflow: visible;
 }
-.clip-svg {
-  position: absolute; left: 0; top: 0; width: 100%; height: 100%;
-  pointer-events: none; overflow: visible;
-}
 .clock-date {
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 16px; font-weight: 400;
   color: var(--text-muted);
   margin-top: 4px;
 }
-}
+.clip-svg { position: absolute; width: 0; height: 0; overflow: hidden; }
 body.has-wallpaper .clock-date {
   color: #d0d0d0;
   text-shadow: 0 1px 4px rgba(0,0,0,.5);

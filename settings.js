@@ -790,16 +790,21 @@ async function loadWallpaperCached() {
 
 async function loadWallpaperBingUpdate() {
   if (currentWallpaper === 'bing') {
+    var prevUrl = bingImageUrl;
     await fetchBingWallpaper();
-    await saveAll();
-    applyWallpaper();
-    if (autoExtractToggle?.checked) watchWallpaperAndExtract();
+    if (bingImageUrl !== prevUrl) {
+      await saveAll();
+      applyWallpaper();
+      if (autoExtractToggle?.checked) watchWallpaperAndExtract();
+    }
   }
   if (currentWallpaper === 'nasa' && !nasaUrl) {
     await fetchNasaApod();
-    await saveAll();
-    applyWallpaper();
-    if (autoExtractToggle?.checked) watchWallpaperAndExtract();
+    if (nasaUrl) {
+      await saveAll();
+      applyWallpaper();
+      if (autoExtractToggle?.checked) watchWallpaperAndExtract();
+    }
   }
 }
 
@@ -896,6 +901,27 @@ async function saveEngines() {
   await chrome.storage.local.set({ enabledEngines, customEngines });
 }
 
+function setupEngineIcon(img, domain) {
+  var urls = [];
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+    urls.push(chrome.runtime.getURL('_favicon/') + '?pageUrl=' + encodeURIComponent('https://' + domain + '/') + '&size=32');
+  }
+  urls.push(faviconUrl(domain));
+  urls.push.apply(urls, faviconFallbackChain(domain));
+  var tried = 0;
+  img.src = urls[0];
+  img.onerror = function() {
+    tried++;
+    if (tried < urls.length) {
+      img.src = urls[tried];
+      return;
+    }
+    img.style.display = 'none';
+    var fb = img.parentElement.querySelector('.eng-icon-fallback');
+    if (fb) fb.style.display = 'flex';
+  };
+}
+
 function buildEngineCheckList() {
   const list = document.getElementById('engineCheckList');
   if (!list) return;
@@ -906,8 +932,9 @@ function buildEngineCheckList() {
     row.className = 'engine-check-row';
     row.innerHTML =
       '<label class="checkbox-wrap"><input type="checkbox" value="' + key + '" ' + (enabledEngines.includes(key) ? 'checked' : '') + '><span class="checkbox-box"></span></label>' +
-      '<span class="eng-icon-wrap"><img src="' + faviconUrl(eng.icon) + '" onerror="this.style.display=\'none\';this.parentElement.querySelector(\'.eng-icon-fallback\').style.display=\'flex\'"><span class="eng-icon-fallback">' + eng.name[0] + '</span></span>' +
+      '<span class="eng-icon-wrap"><img><span class="eng-icon-fallback">' + eng.name[0] + '</span></span>' +
       '<span class="eng-name">' + eng.name + '</span>';
+    setupEngineIcon(row.querySelector('img'), eng.icon);
     row.querySelector('input').addEventListener('change', () => {
       if (enabledEngines.includes(key)) enabledEngines = enabledEngines.filter(e => e !== key);
       else enabledEngines.push(key);
@@ -924,9 +951,10 @@ function buildEngineCheckList() {
     row.className = 'engine-check-row';
     row.innerHTML =
       '<label class="checkbox-wrap"><input type="checkbox" checked disabled><span class="checkbox-box"></span></label>' +
-      '<span class="eng-icon-wrap"><img src="' + faviconUrl(domain) + '" onerror="this.style.display=\'none\';this.parentElement.querySelector(\'.eng-icon-fallback\').style.display=\'flex\'"><span class="eng-icon-fallback">' + c.name[0] + '</span></span>' +
+      '<span class="eng-icon-wrap"><img><span class="eng-icon-fallback">' + c.name[0] + '</span></span>' +
       '<span class="eng-name">' + c.name + '</span>' +
       '<button class="del-engine" data-idx="' + i + '" title="删除">✕</button>';
+    setupEngineIcon(row.querySelector('img'), domain);
     row.querySelector('.del-engine').addEventListener('click', () => {
       customEngines.splice(i, 1);
       saveEngines();
@@ -946,7 +974,8 @@ function rebuildEngineDropdown() {
     const item = document.createElement('div');
     item.className = 'engine-item' + (eng.id === currentEngine ? ' active' : '');
     const domain = eng.icon || eng.url.replace(/https?:\/\//, '').split('/')[0];
-    item.innerHTML = '<span class="eng-icon-wrap"><img src="' + faviconUrl(domain) + '" onerror="this.style.display=\'none\';this.parentElement.querySelector(\'.eng-icon-fallback\').style.display=\'flex\'"><span class="eng-icon-fallback">' + eng.name[0] + '</span></span> ' + eng.name;
+    item.innerHTML = '<span class="eng-icon-wrap"><img><span class="eng-icon-fallback">' + eng.name[0] + '</span></span> ' + eng.name;
+    setupEngineIcon(item.querySelector('img'), domain);
     item.addEventListener('click', () => selectEngine(eng.id));
     list.appendChild(item);
   }
@@ -971,9 +1000,24 @@ function updateEngineUI() {
   const domain = eng.icon || eng.url.replace(/https?:\/\//, '').split('/')[0];
   if (icon) {
     icon.style.display = 'none';
-    icon.onerror = () => { icon.style.display = 'none'; if(fallback) { fallback.style.display = 'flex'; fallback.textContent = eng.name[0]; }};
+    var urls = [];
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+      urls.push(chrome.runtime.getURL('_favicon/') + '?pageUrl=' + encodeURIComponent('https://' + domain + '/') + '&size=32');
+    }
+    urls.push(faviconUrl(domain));
+    urls.push.apply(urls, faviconFallbackChain(domain));
+    var tried = 0;
+    icon.onerror = function() {
+      tried++;
+      if (tried < urls.length) {
+        icon.src = urls[tried];
+        return;
+      }
+      icon.style.display = 'none';
+      if (fallback) { fallback.style.display = 'flex'; fallback.textContent = eng.name[0]; }
+    };
     icon.onload = () => { icon.style.display = ''; if(fallback) fallback.style.display = 'none'; };
-    icon.src = faviconUrl(domain);
+    icon.src = urls[0];
   }
   const label = document.getElementById('engineLabel');
   if (label) label.innerHTML = I.search + ' ' + eng.name;
