@@ -893,11 +893,11 @@ async function saveEngines() {
 
 function setupEngineIcon(img, domain) {
   var urls = [];
+  urls.push(faviconUrl(domain));
+  urls.push.apply(urls, faviconFallbackChain(domain));
   if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
     urls.push(chrome.runtime.getURL('_favicon/') + '?pageUrl=' + encodeURIComponent('https://' + domain + '/') + '&size=32');
   }
-  urls.push(faviconUrl(domain));
-  urls.push.apply(urls, faviconFallbackChain(domain));
   var tried = 0;
   img.src = urls[0];
   img.onerror = function() {
@@ -991,11 +991,11 @@ function updateEngineUI() {
   if (icon) {
     icon.style.display = 'none';
     var urls = [];
+    urls.push(faviconUrl(domain));
+    urls.push.apply(urls, faviconFallbackChain(domain));
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
       urls.push(chrome.runtime.getURL('_favicon/') + '?pageUrl=' + encodeURIComponent('https://' + domain + '/') + '&size=32');
     }
-    urls.push(faviconUrl(domain));
-    urls.push.apply(urls, faviconFallbackChain(domain));
     var tried = 0;
     icon.onerror = function() {
       tried++;

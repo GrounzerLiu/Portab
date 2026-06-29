@@ -629,11 +629,11 @@ function createTile(item, isPinned) {
   function tryWebFallback() {
     const img = document.createElement('img');
     var urls = [];
+    urls.push(item.favicon || faviconUrl(hostname));
+    urls.push.apply(urls, faviconFallbackChain(hostname));
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
       urls.push(chrome.runtime.getURL('_favicon/') + '?pageUrl=' + encodeURIComponent('https://' + hostname + '/') + '&size=32');
     }
-    urls.push(item.favicon || faviconUrl(hostname));
-    urls.push.apply(urls, faviconFallbackChain(hostname));
     var tried = 0;
     img.src = urls[0];
     img.onerror = function() {
