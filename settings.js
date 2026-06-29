@@ -623,8 +623,8 @@ async function setWallpaper(mode) {
   if (mode === 'bing' && !bingImageUrl) {
     fetchBingWallpaper().then(() => { saveAll(); applyWallpaper(); });
   }
-  if (mode === 'picsum' && !picsumUrl) {
-    currentPicsumSeed = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  if (mode === 'picsum') {
+    currentPicsumSeed = Date.now().toString(36) + Math.floor(Math.random() * 1000);
     picsumUrl = generatePicsumUrl();
   }
   if (mode === 'nasa' && !nasaUrl) {
