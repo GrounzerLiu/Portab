@@ -805,14 +805,18 @@ async function ignoreSite(item) {
 
 let ctxItem = null;
 
+var _ctxTimeout = null;
+
 function showCtxMenu(x, y, tileEl) {
   const menu = document.getElementById('ctxMenu');
   if (!menu) return;
+  if (_ctxTimeout) { clearTimeout(_ctxTimeout); _ctxTimeout = null; }
   ctxItem = { url: tileEl.href, title: tileEl.querySelector('.tile-label')?.textContent, element: tileEl };
   const isPinned = tileEl.closest('#pinnedGrid') !== null;
   const hostname = new URL(tileEl.href).hostname;
 
   function doShow() {
+    _ctxTimeout = null;
     menu.innerHTML = '';
     addCtxItem(menu, isPinned ? '取消固定' : '固定', () => {
       togglePin({ url: tileEl.href, title: ctxItem.title, hostname, favicon: '', visitCount: parseInt(tileEl.dataset.visits) || 0 });
@@ -825,7 +829,6 @@ function showCtxMenu(x, y, tileEl) {
     const maxY = window.innerHeight - menu.offsetHeight;
     menu.style.left = Math.min(x, maxX - 10) + 'px';
     menu.style.top = Math.min(y, maxY - 10) + 'px';
-    // 计算鼠标在菜单中的相对位置作为 clip-path 原点
     void menu.offsetHeight;
     var r = menu.getBoundingClientRect();
     menu.style.setProperty('--cx', ((x - r.left) / r.width * 100) + '%');
@@ -833,13 +836,23 @@ function showCtxMenu(x, y, tileEl) {
     menu.classList.remove('hidden');
   }
 
-  if (!menu.classList.contains('hidden')) {
-    // 先记录鼠标位置，隐藏后重新显示
-    menu.classList.add('hidden');
-    setTimeout(doShow, 160);
-  } else {
-    doShow();
-  }
+  // 不管当前状态，直接重置为 hidden
+  menu.classList.add('hidden');
+  // 临时改为可见状态来测量实际尺寸（同步操作，浏览器不会重绘）
+  menu.style.transform = 'scale(1)';
+  menu.style.opacity = '1';
+  menu.style.left = Math.min(x, window.innerWidth - 200) + 'px';
+  menu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
+  void menu.offsetHeight;
+  var r = menu.getBoundingClientRect();
+  var cx = r.width ? ((x - r.left) / r.width * 100) : 50;
+  var cy = r.height ? ((y - r.top) / r.height * 100) : 50;
+  menu.style.setProperty('--cx', Math.max(0, Math.min(100, cx)) + '%');
+  menu.style.setProperty('--cy', Math.max(0, Math.min(100, cy)) + '%');
+  // 恢复 hidden 状态
+  menu.style.transform = '';
+  menu.style.opacity = '';
+  _ctxTimeout = setTimeout(doShow, 160);
 }
 
 function addCtxItem(menu, text, onClick, danger) {
