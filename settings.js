@@ -628,11 +628,10 @@ async function setWallpaper(mode) {
     picsumUrl = generatePicsumUrl();
   }
   if (mode === 'nasa' && !nasaUrl) {
-    await fetchNasaApod();
-    if (nasaUrl) { await saveAll(); applyWallpaper(); tryAutoExtract(); }
+    fetchNasaApod().then(() => { saveAll(); applyWallpaper(); tryAutoExtract(); });
   }
 
-  await saveAll();
+  saveAll();
   applyWallpaper();
   if (currentWallpaper !== 'none') {
     watchWallpaperAndExtract();
