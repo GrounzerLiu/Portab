@@ -825,10 +825,16 @@ function showCtxMenu(x, y, tileEl) {
     const maxY = window.innerHeight - menu.offsetHeight;
     menu.style.left = Math.min(x, maxX - 10) + 'px';
     menu.style.top = Math.min(y, maxY - 10) + 'px';
+    // 计算鼠标在菜单中的相对位置作为 clip-path 原点
+    void menu.offsetHeight;
+    var r = menu.getBoundingClientRect();
+    menu.style.setProperty('--cx', ((x - r.left) / r.width * 100) + '%');
+    menu.style.setProperty('--cy', ((y - r.top) / r.height * 100) + '%');
     menu.classList.remove('hidden');
   }
 
   if (!menu.classList.contains('hidden')) {
+    // 先记录鼠标位置，隐藏后重新显示
     menu.classList.add('hidden');
     setTimeout(doShow, 160);
   } else {
