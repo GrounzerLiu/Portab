@@ -252,20 +252,17 @@ body:not(.has-wallpaper) .clock-time > span {
 .glass-blur {
   position: absolute; left: 0; top: 0; right: 0; bottom: 0;
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  clip-path: url(#textClip);
-  -webkit-clip-path: url(#textClip);
-  pointer-events: none; z-index: 0;
-}
-.glass-blur::before {
-  content: '';
-  position: absolute; left: 0; top: 0; right: 0; bottom: 0;
   background: color-mix(in srgb, var(--card-bg, var(--surface)) 55%, transparent);
-  pointer-events: none;
+  pointer-events: none; z-index: 0;
 }
 .edge-svg {
   position: absolute; left: 0; top: 0;
   pointer-events: none; z-index: 3;
   overflow: visible;
+}
+.clip-svg {
+  position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+  pointer-events: none; overflow: visible;
 }
 .clock-date {
   font-size: 16px;

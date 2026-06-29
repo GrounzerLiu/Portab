@@ -211,7 +211,7 @@ const historyGrid = document.getElementById('historyGrid');
       if (svgEl) {
         svgEl.setAttribute('width', w);
         svgEl.setAttribute('height', h);
-        var clipPath = document.getElementById('textClip');
+        svgEl.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
         clipText.setAttribute('x', w / 2);
         clipText.setAttribute('y', h / 2);
         clipText.setAttribute('font-size', parseFloat(cs.fontSize));
@@ -238,7 +238,7 @@ const historyGrid = document.getElementById('historyGrid');
     // Mouse tracking for light glow
     var lx = 0, ly = 0, aid = 0;
     function trackMouse() {
-      var r = (wrapEl || timeEl).getBoundingClientRect();
+      var r = timeEl.getBoundingClientRect();
       timeEl.style.setProperty('--x', (lx - r.left) + 'px');
       timeEl.style.setProperty('--y', (ly - r.top) + 'px');
       aid = requestAnimationFrame(trackMouse);
@@ -252,6 +252,10 @@ const historyGrid = document.getElementById('historyGrid');
     });
 
     window.updateClockLayout = updateLayout;
+    // Also re-layout when fonts load
+    if (document.fonts) {
+      document.fonts.ready.then(updateLayout);
+    }
 
     // Initial layout after fonts/style settle
     setTimeout(updateLayout, 50);
