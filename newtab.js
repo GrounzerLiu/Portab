@@ -810,19 +810,29 @@ function showCtxMenu(x, y, tileEl) {
   ctxItem = { url: tileEl.href, title: tileEl.querySelector('.tile-label')?.textContent, element: tileEl };
   const isPinned = tileEl.closest('#pinnedGrid') !== null;
   const hostname = new URL(tileEl.href).hostname;
-  menu.innerHTML = '';
-  addCtxItem(menu, isPinned ? '取消固定' : '固定', () => {
-    togglePin({ url: tileEl.href, title: ctxItem.title, hostname, favicon: '', visitCount: parseInt(tileEl.dataset.visits) || 0 });
-  });
-  addCtxItem(menu, '在新标签页打开', () => window.open(tileEl.href));
-  addCtxItem(menu, '复制链接', () => navigator.clipboard.writeText(tileEl.href));
-  addCtxDivider(menu);
-  addCtxItem(menu, '屏蔽此站点', () => ignoreSite({ url: tileEl.href, hostname }), true);
-  const maxX = window.innerWidth - menu.offsetWidth;
-  const maxY = window.innerHeight - menu.offsetHeight;
-  menu.style.left = Math.min(x, maxX - 10) + 'px';
-  menu.style.top = Math.min(y, maxY - 10) + 'px';
-  menu.classList.remove('hidden');
+
+  function doShow() {
+    menu.innerHTML = '';
+    addCtxItem(menu, isPinned ? '取消固定' : '固定', () => {
+      togglePin({ url: tileEl.href, title: ctxItem.title, hostname, favicon: '', visitCount: parseInt(tileEl.dataset.visits) || 0 });
+    });
+    addCtxItem(menu, '在新标签页打开', () => window.open(tileEl.href));
+    addCtxItem(menu, '复制链接', () => navigator.clipboard.writeText(tileEl.href));
+    addCtxDivider(menu);
+    addCtxItem(menu, '屏蔽此站点', () => ignoreSite({ url: tileEl.href, hostname }), true);
+    const maxX = window.innerWidth - menu.offsetWidth;
+    const maxY = window.innerHeight - menu.offsetHeight;
+    menu.style.left = Math.min(x, maxX - 10) + 'px';
+    menu.style.top = Math.min(y, maxY - 10) + 'px';
+    menu.classList.remove('hidden');
+  }
+
+  if (!menu.classList.contains('hidden')) {
+    menu.classList.add('hidden');
+    requestAnimationFrame(function() { requestAnimationFrame(doShow); });
+  } else {
+    doShow();
+  }
 }
 
 function addCtxItem(menu, text, onClick, danger) {
