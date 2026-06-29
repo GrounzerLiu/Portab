@@ -252,6 +252,8 @@ body:not(.has-wallpaper) .clock-time > span {
 .glass-blur {
   position: absolute; left: 0; top: 0; right: 0; bottom: 0;
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  clip-path: url(#textClip);
+  -webkit-clip-path: url(#textClip);
   pointer-events: none; z-index: 0;
 }
 .glass-blur::before {
