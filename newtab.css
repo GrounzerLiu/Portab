@@ -96,7 +96,9 @@ body.ready { opacity: 1; }
   height: 40px;
   border: none;
   border-radius: 50%;
-  background: transparent;
+  background: color-mix(in srgb, var(--surface2) 50%, transparent);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   color: var(--text);
   cursor: pointer;
   display: flex;
@@ -105,7 +107,6 @@ body.ready { opacity: 1; }
   padding: 0;
   z-index: 10;
   isolation: isolate;
-  overflow: hidden;
 }
 .refresh-wallpaper-btn .icon,
 .settings-btn .icon {
@@ -113,17 +114,24 @@ body.ready { opacity: 1; }
   z-index: 3;
   width: 22px; height: 22px;
 }
+/* 按钮边框光 — mask-composite exclude 仅显示边缘 */
 .refresh-wallpaper-btn::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: color-mix(in srgb, var(--surface2) 50%, transparent);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  transition: background .25s ease-out;
-  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
-  z-index: 0;
+  padding: 1px;
+  background: radial-gradient(80px circle at var(--x) var(--y),
+    rgba(255,255,255, .8), transparent 70%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: var(--glow);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  z-index: 2;
 }
 .refresh-wallpaper-btn::after {
   content: '';
@@ -138,13 +146,6 @@ body.ready { opacity: 1; }
   z-index: 1;
 }
 .refresh-wallpaper-btn:hover { color: var(--text); }
-.refresh-wallpaper-btn:hover::before {
-  background: color-mix(in srgb, var(--surface2) 65%, transparent);
-}
-/* 按钮边框光 — 不受 ::after opacity 影响 */
-.refresh-wallpaper-btn {
-  box-shadow: 0 0 0 1px rgba(255,255,255, calc(var(--glow) * 0.25));
-}
 .refresh-wallpaper-btn.spinning svg { animation: refresh-spin .8s ease-out; }
 @keyframes refresh-spin {
   from { transform: rotate(0deg); }
@@ -162,7 +163,9 @@ body.ready { opacity: 1; }
   height: 40px;
   border: none;
   border-radius: 50%;
-  background: transparent;
+  background: color-mix(in srgb, var(--surface2) 50%, transparent);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   color: var(--text);
   cursor: pointer;
   display: flex;
@@ -171,19 +174,24 @@ body.ready { opacity: 1; }
   padding: 0;
   z-index: 10;
   isolation: isolate;
-  overflow: hidden;
 }
 .settings-btn::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: color-mix(in srgb, var(--surface2) 50%, transparent);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  transition: background .25s ease-out;
-  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
-  z-index: 0;
+  padding: 1px;
+  background: radial-gradient(80px circle at var(--x) var(--y),
+    rgba(255,255,255, .8), transparent 70%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: var(--glow);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  z-index: 2;
 }
 .settings-btn::after {
   content: '';
@@ -198,13 +206,6 @@ body.ready { opacity: 1; }
   z-index: 1;
 }
 .settings-btn:hover { color: var(--text); }
-.settings-btn:hover::before {
-  background: color-mix(in srgb, var(--surface2) 65%, transparent);
-}
-/* 按钮边框光 — 不受 ::after opacity 影响 */
-.settings-btn {
-  box-shadow: 0 0 0 1px rgba(255,255,255, calc(var(--glow) * 0.25));
-}
 
 /* ===== Search ===== */
 .clock {
