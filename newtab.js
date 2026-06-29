@@ -195,6 +195,7 @@ const historyGrid = document.getElementById('historyGrid');
     var edgeGrad = document.getElementById('edgeGrad');
 
     function updateLayout() {
+      if (!spanEl) return;
       var rect = wrapEl.getBoundingClientRect();
       var w = rect.width, h = rect.height;
       var cs = getComputedStyle(spanEl);
