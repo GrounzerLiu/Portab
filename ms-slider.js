@@ -73,61 +73,62 @@
     slider.appendChild(fragment);
   }
 
-  function attachInteraction(slider) {
+  var _dragSlider = null;
+
+  function setFromX(slider, xPx) {
+    const w = slider.offsetWidth;
     const min = parseFloat(slider.dataset.min);
     const max = parseFloat(slider.dataset.max);
     const steps = parseInt(slider.dataset.steps) || 0;
     const range = max - min;
+    let pct = (xPx - 4) / (w - 12);
+    pct = Math.max(0, Math.min(1, pct));
+    if (steps >= 2) {
+      const step = 1 / (steps - 1);
+      pct = Math.round(pct / step) * step;
+    }
+    const value = min + pct * range;
+    slider.dataset.value = value;
+    paint(slider);
+    slider.dispatchEvent(new CustomEvent('ms-change', { detail: { value }, bubbles: true }));
+  }
 
-    // Skip interaction if disabled
+  function _onMove(e) {
+    if (!_dragSlider) return;
+    var rect = _dragSlider.getBoundingClientRect();
+    var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    setFromX(_dragSlider, x);
+  }
+  function _onUp() {
+    if (!_dragSlider) return;
+    _dragSlider.classList.remove('ms-dragging');
+    var v = parseFloat(_dragSlider.dataset.value);
+    _dragSlider.dispatchEvent(new CustomEvent('ms-change-final', { detail: { value: v }, bubbles: true }));
+    _dragSlider = null;
+  }
+  window.addEventListener('mousemove', _onMove);
+  window.addEventListener('mouseup', _onUp);
+  window.addEventListener('touchmove', _onMove, { passive: false });
+  window.addEventListener('touchend', _onUp);
+
+  function attachInteraction(slider) {
     if (slider.classList.contains('ms-disabled')) return;
 
-    function setFromX(xPx) {
-      const w = slider.offsetWidth;
-      let pct = (xPx - 4) / (w - 12);
-      pct = Math.max(0, Math.min(1, pct));
-
-      if (steps >= 2) {
-        const step = 1 / (steps - 1);
-        const idx = Math.round(pct / step);
-        pct = idx * step;
-      }
-
-      const value = min + pct * range;
-      slider.dataset.value = value;
-      paint(slider);
-      // Fire change event for app to update
-      slider.dispatchEvent(new CustomEvent('ms-change', { detail: { value }, bubbles: true }));
-    }
-
-    let dragging = false;
     function onDown(e) {
       if (slider.classList.contains('ms-disabled')) return;
       e.preventDefault();
-      dragging = true;
+      _dragSlider = slider;
       slider.classList.add('ms-dragging');
-      const rect = slider.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      setFromX(x);
-    }
-    function onMove(e) {
-      if (!dragging) return;
-      const rect = slider.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      setFromX(x);
-    }
-    function onUp() {
-      if (!dragging) return;
-      dragging = false;
-      slider.classList.remove('ms-dragging');
-      // Fire final event for expensive operations (like grid re-render)
-      const v = parseFloat(slider.dataset.value);
-      slider.dispatchEvent(new CustomEvent('ms-change-final', { detail: { value: v }, bubbles: true }));
+      var rect = slider.getBoundingClientRect();
+      var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      setFromX(slider, x);
     }
     function onKey(e) {
       if (slider.classList.contains('ms-disabled')) return;
-      let v = parseFloat(slider.dataset.value);
-      const big = (e.shiftKey ? (max - min) / 10 : (max - min) / 20);
+      var min = parseFloat(slider.dataset.min);
+      var max = parseFloat(slider.dataset.max);
+      var v = parseFloat(slider.dataset.value);
+      var big = (e.shiftKey ? (max - min) / 10 : (max - min) / 20);
       if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') v -= big;
       else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') v += big;
       else if (e.key === 'Home') v = min;
@@ -141,11 +142,7 @@
     }
 
     slider.addEventListener('mousedown', onDown);
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
     slider.addEventListener('touchstart', onDown, { passive: false });
-    window.addEventListener('touchmove', onMove, { passive: false });
-    window.addEventListener('touchend', onUp);
     slider.addEventListener('keydown', onKey);
     slider.tabIndex = 0;
   }

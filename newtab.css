@@ -1168,8 +1168,6 @@ body.has-wallpaper .tile {
   height: 16px;
   border-radius: 2px 8px 8px 2px;
   background: color-mix(in srgb, var(--surface2) 70%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   z-index: 1;
 }
 .ms-track-active {
