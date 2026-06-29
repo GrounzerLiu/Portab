@@ -271,7 +271,7 @@ body.has-wallpaper .clock-date {
   left: 50%;
   transform: translateX(-50%);
   margin-top: 12px;
-  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
@@ -513,7 +513,7 @@ body.has-wallpaper .search-input {
 }
 body.has-wallpaper .dialog,
 body.has-wallpaper .engine-dropdown {
-  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -968,7 +968,7 @@ body.has-wallpaper .tile {
 .ctx-menu {
   position: fixed; z-index: 200;
   min-width: 180px;
-  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
