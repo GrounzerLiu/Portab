@@ -338,7 +338,7 @@ body.has-wallpaper .clock-date {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 1.5px;
   background: radial-gradient(240px circle at var(--x) var(--y),
     rgba(255,255,255, 0.7), transparent 70%);
   -webkit-mask:
@@ -351,7 +351,7 @@ body.has-wallpaper .clock-date {
   pointer-events: none;
   z-index: 3;
 }
-/* 搜索框表面光 */
+/* 搜索框 surface 光 */
 .search-box::after {
   content: '';
   position: absolute;
@@ -609,7 +609,7 @@ body.search-focused .search-focus-overlay {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 1.5px;
   background: radial-gradient(240px circle at var(--x) var(--y),
     rgba(255,255,255, 0.85), transparent 70%);
   -webkit-mask:
