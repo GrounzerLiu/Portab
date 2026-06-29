@@ -830,7 +830,7 @@ function showCtxMenu(x, y, tileEl) {
 
   if (!menu.classList.contains('hidden')) {
     menu.classList.add('hidden');
-    requestAnimationFrame(function() { requestAnimationFrame(doShow); });
+    setTimeout(doShow, 160);
   } else {
     doShow();
   }
