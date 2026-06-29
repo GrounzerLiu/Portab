@@ -271,7 +271,9 @@ body.has-wallpaper .clock-date {
   left: 50%;
   transform: translateX(-50%);
   margin-top: 12px;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: var(--shadow-lg);
