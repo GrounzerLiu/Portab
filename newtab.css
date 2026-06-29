@@ -978,7 +978,7 @@ body.has-wallpaper .tile {
   font-size: 13px;
   color: var(--text);
   clip-path: circle(150% at var(--cx, 50%) var(--cy, 50%));
-  transition: clip-path .2s ease-out;
+  transition: clip-path .25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .ctx-menu.hidden {
   clip-path: circle(0% at var(--cx, 50%) var(--cy, 50%));
