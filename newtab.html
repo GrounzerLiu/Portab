@@ -33,7 +33,27 @@
   <div class="container">
     <!-- 搜索框 -->
     <div id="clock" class="clock">
-      <div class="clock-time" id="clockTime">00:00</div>
+      <div id="clockWrap" class="clock-wrap">
+        <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+          <defs>
+            <clipPath id="textClip">
+              <text id="clipText" x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-family="inherit" font-size="72px" font-weight="200" letter-spacing="-2px" fill="white">00:00</text>
+            </clipPath>
+          </defs>
+        </svg>
+        <div id="glassBlur" class="glass-blur"></div>
+        <div class="clock-time" id="clockTime"><span>00:00</span></div>
+        <svg id="edgeSvg" class="edge-svg" viewBox="0 0 1 1" width="1" height="1">
+          <defs>
+            <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
+              <stop offset="50%" stop-color="rgba(255,255,255,0.6)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0.2)"/>
+            </linearGradient>
+          </defs>
+          <text id="edgeText" x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="none" stroke="url(#edgeGrad)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" font-family="inherit" font-size="72px" font-weight="200" letter-spacing="-2px">00:00</text>
+        </svg>
+      </div>
       <div class="clock-date" id="clockDate">---</div>
       <div id="clockPopup" class="clock-popup hidden">
         <div class="popup-row">

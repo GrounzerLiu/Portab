@@ -171,14 +171,93 @@ const historyGrid = document.getElementById('historyGrid');
       var h12 = h % 12 || 12;
       timeStr = ampm + ' ' + h12 + ':' + m;
     }
-    document.getElementById('clockTime').textContent = timeStr;
+    document.getElementById('clockTime').dataset.text = timeStr;
+    var span = document.querySelector('#clockTime span');
+    if (span) span.textContent = timeStr;
+    // Sync SVG edge text
+    var edgeText = document.getElementById('edgeText');
+    if (edgeText) edgeText.textContent = timeStr;
+    var clipText = document.getElementById('clipText');
+    if (clipText) clipText.textContent = timeStr;
     document.getElementById('clockDate').textContent = 
       now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 星期' +
       ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
+    if (window.updateClockLayout) window.updateClockLayout();
   }
   window.updateClockDisplay = updateClockDisplay;
   updateClockDisplay();
   setInterval(updateClockDisplay, 10000);
+
+  // ===== Clock layout & glass effect =====
+  (function initClockGlass() {
+    var wrapEl = document.getElementById('clockWrap');
+    var timeEl = document.getElementById('clockTime');
+    var spanEl = timeEl ? timeEl.querySelector('span') : null;
+    var glassEl = document.getElementById('glassBlur');
+    var clipText = document.getElementById('clipText');
+    var edgeSvg = document.getElementById('edgeSvg');
+    var edgeText = document.getElementById('edgeText');
+    var edgeGrad = document.getElementById('edgeGrad');
+
+    function updateLayout() {
+      if (!wrapEl || !spanEl) return;
+      var rect = wrapEl.getBoundingClientRect();
+      var w = rect.width, h = rect.height;
+      if (w === 0 || h === 0) return;
+      var cs = getComputedStyle(spanEl);
+
+      // SVG clipPath
+      var svgEl = document.getElementById('clipSvg');
+      if (svgEl) {
+        svgEl.setAttribute('width', w);
+        svgEl.setAttribute('height', h);
+        var clipPath = document.getElementById('textClip');
+        clipText.setAttribute('x', w / 2);
+        clipText.setAttribute('y', h / 2);
+        clipText.setAttribute('font-size', parseFloat(cs.fontSize));
+        clipText.setAttribute('font-weight', cs.fontWeight);
+        clipText.setAttribute('font-family', cs.fontFamily);
+        clipText.setAttribute('letter-spacing', cs.letterSpacing);
+        glassEl.style.clipPath = 'url(#textClip)';
+        glassEl.style.webkitClipPath = 'url(#textClip)';
+      }
+
+      // Edge SVG
+      var fs = parseFloat(cs.fontSize);
+      edgeSvg.setAttribute('width', w);
+      edgeSvg.setAttribute('height', h);
+      edgeSvg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      edgeText.setAttribute('x', w / 2);
+      edgeText.setAttribute('y', h / 2);
+      edgeText.setAttribute('font-size', fs);
+      edgeText.setAttribute('font-weight', cs.fontWeight);
+      edgeText.setAttribute('font-family', cs.fontFamily);
+      edgeText.setAttribute('letter-spacing', cs.letterSpacing);
+    }
+
+    // Mouse tracking for light glow
+    var lx = 0, ly = 0, aid = 0;
+    function trackMouse() {
+      var r = (wrapEl || timeEl).getBoundingClientRect();
+      timeEl.style.setProperty('--x', (lx - r.left) + 'px');
+      timeEl.style.setProperty('--y', (ly - r.top) + 'px');
+      aid = requestAnimationFrame(trackMouse);
+    }
+    document.addEventListener('mousemove', function(e) {
+      lx = e.clientX; ly = e.clientY;
+      if (!aid) aid = requestAnimationFrame(trackMouse);
+    });
+    document.addEventListener('mouseout', function(e) {
+      if (!e.relatedTarget) { cancelAnimationFrame(aid); aid = 0; }
+    });
+
+    window.updateClockLayout = updateLayout;
+
+    // Initial layout after fonts/style settle
+    setTimeout(updateLayout, 50);
+    setTimeout(updateLayout, 300);
+    window.addEventListener('resize', updateLayout);
+  })();
 
   // Spotlight hover — capsule distance field, throttled with rAF
   function spotlightOne(el, mx, my) {
