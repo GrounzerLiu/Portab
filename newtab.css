@@ -977,13 +977,11 @@ body.has-wallpaper .tile {
   padding: 4px 0;
   font-size: 13px;
   color: var(--text);
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity .15s ease-out, transform .15s ease-out;
+  clip-path: inset(0 round 8px);
+  transition: clip-path .2s ease-out;
 }
 .ctx-menu.hidden {
-  opacity: 0;
-  transform: scale(.95);
+  clip-path: inset(50% round 8px);
   pointer-events: none;
 }
 .ctx-item {
