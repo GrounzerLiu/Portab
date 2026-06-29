@@ -535,7 +535,8 @@ function createTile(item, isPinned) {
   // Try cached favicon first; fall back to live resolution
   const hostname = item.hostname;
   if (window.FaviconCache) {
-    window.FaviconCache.resolveFavicon(hostname).then(url => {
+    const origin = item.url && (new URL(item.url)).origin;
+    window.FaviconCache.resolveFavicon(hostname, origin || item.url).then(url => {
       if (url) {
         const img = document.createElement('img');
         img.src = url;

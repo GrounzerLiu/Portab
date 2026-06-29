@@ -47,40 +47,29 @@
     saveCache();
   }
 
-  async function resolveFavicon(domain, size = 32) {
+  async function resolveFavicon(domain, pageUrl, size = 32) {
     // 1. Try cache
     const cached = await getCachedFavicon(domain);
     if (cached && cached.status === 'ok' && cached.url) {
       return cached.url;
     }
 
-    // 2. Build candidate chain — 直接 /favicon.ico 最可靠
-    const sources = [
-      'https://' + domain + '/favicon.ico',
-      'https://api.faviconkit.com/' + domain + '/' + size,
-      'https://www.google.com/s2/favicons?domain=' + domain + '&sz=' + size,
-      'https://icons.duckduckgo.com/ip3/' + domain + '.ico',
-    ];
-
-    for (const url of sources) {
+    // 2. Only _favicon/ API — instant, no network
+    if (pageUrl) {
+      var url = chrome.runtime.getURL('_favicon/') + '?pageUrl=' + encodeURIComponent(pageUrl) + '&size=' + size;
       try {
-        const ok = await new Promise((resolve) => {
-          const img = new Image();
-          const t = setTimeout(() => { img.onload = img.onerror = null; resolve(false); }, 5000);
-          img.onload = () => {
-            clearTimeout(t);
-            // 过滤掉占位图：DuckDuckGo 返回箭头，faviconkit 返回 1x1 像素
-            if (img.naturalWidth < 16 || img.naturalHeight < 16) { resolve(false); return; }
-            resolve(true);
-          };
-          img.onerror = () => { clearTimeout(t); resolve(false); };
+        var ok = await new Promise(function(resolve) {
+          var img = new Image();
+          var t = setTimeout(function() { img.onload = img.onerror = null; resolve(false); }, 1000);
+          img.onload = function() { clearTimeout(t); resolve(true); };
+          img.onerror = function() { clearTimeout(t); resolve(false); };
           img.src = url;
         });
         if (ok) {
           await setCachedFavicon(domain, url, 'ok');
           return url;
         }
-      } catch (e) { /* try next */ }
+      } catch (e) {}
     }
 
     await setCachedFavicon(domain, '', 'failed');

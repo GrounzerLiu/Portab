@@ -786,11 +786,6 @@ async function loadWallpaperCached() {
   if (result.autoExtractColor && autoExtractToggle) {
     autoExtractToggle.checked = true;
   }
-
-  if (currentWallpaper !== 'none' && autoExtractToggle?.checked) {
-    setTimeout(watchWallpaperAndExtract, 500);
-    setTimeout(tryAutoExtract, 800);
-  }
 }
 
 async function loadWallpaperBingUpdate() {
