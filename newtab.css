@@ -629,25 +629,19 @@ body.has-wallpaper .section-title {
   font-size: 12px; font-weight: 600; color: var(--text-muted);
 }
 .shortcut-result-fav img[style*="display:none"] + .shortcut-result-letter { display: flex; }
-.shortcut-result-open {
-  flex-shrink: 0; color: var(--text-muted); background: transparent;
-  border: none; border-radius: 6px; width: 28px; height: 28px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .15s ease-out, color .15s ease-out;
-}
-.shortcut-result-open:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
-
+.shortcut-result-open,
 .shortcut-result-pin {
   flex-shrink: 0; color: var(--accent); background: var(--accent-bg);
   border: none; border-radius: 6px; width: 28px; height: 28px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: background .15s ease-out;
 }
+.shortcut-result-open:hover,
 .shortcut-result-pin:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
 .shortcut-result-pin.pinned { color: var(--red); background: var(--red-bg); }
 .shortcut-result-pin.pinned:hover { background: color-mix(in srgb, var(--red) 20%, transparent); }
+.shortcut-result-open .icon-sm,
 .shortcut-result-pin .icon-sm { width: 16px; height: 16px; }
-.shortcut-result-open .icon-sm { width: 16px; height: 16px; }
 
 .shortcuts-section { margin-bottom: 20px; }
 .shortcuts-section.is-empty { margin-bottom: 8px; }
