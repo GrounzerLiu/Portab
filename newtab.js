@@ -368,8 +368,6 @@ const historyGrid = document.getElementById('historyGrid');
     addBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       addOverlay.classList.remove('hidden');
-      addOverlay.style.opacity = '1';
-      addOverlay.style.pointerEvents = 'auto';
     });
     if (closeAddBtn) closeAddBtn.addEventListener('click', function() { addOverlay.classList.add('hidden'); });
     addOverlay.addEventListener('click', function(e) { if (e.target === addOverlay) addOverlay.classList.add('hidden'); });

@@ -799,7 +799,7 @@ body.has-wallpaper .tile {
   opacity: 0; pointer-events: none;
   transition: opacity .25s;
 }
-.overlay:not(.hidden) { opacity: 1; pointer-events: auto; }
+.overlay:not(.hidden) { opacity: 1 !important; pointer-events: auto !important; }
 
 .dialog {
   background: var(--surface);
