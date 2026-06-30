@@ -359,15 +359,18 @@ const historyGrid = document.getElementById('historyGrid');
   }, 100);
 })();
 
-// ===== Add Shortcut Dialog (outside init to avoid being skipped by init errors) =====
+// ===== Add Shortcut Dialog =====
 (function() {
   var addBtn = document.getElementById('addShortcutBtn');
   var addOverlay = document.getElementById('addShortcutOverlay');
   var closeAddBtn = document.getElementById('closeAddShortcut');
   if (addBtn && addOverlay) {
-    addBtn.onclick = function() { addOverlay.classList.remove('hidden'); };
-    if (closeAddBtn) closeAddBtn.onclick = function() { addOverlay.classList.add('hidden'); };
-    addOverlay.onclick = function(e) { if (e.target === addOverlay) addOverlay.classList.add('hidden'); };
+    addBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      addOverlay.classList.remove('hidden');
+    });
+    if (closeAddBtn) closeAddBtn.addEventListener('click', function() { addOverlay.classList.add('hidden'); });
+    addOverlay.addEventListener('click', function(e) { if (e.target === addOverlay) addOverlay.classList.add('hidden'); });
   }
 })();
 
