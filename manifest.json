@@ -10,7 +10,8 @@
   "permissions": [
     "history",
     "storage",
-    "favicon"
+    "favicon",
+    "tabs"
   ],
   "host_permissions": [
     "https://www.bing.com/*",
@@ -34,6 +35,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "Portab"
+    "default_title": "Portab",
+    "default_popup": "popup.html"
   }
 }

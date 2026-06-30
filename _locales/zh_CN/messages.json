@@ -304,5 +304,11 @@
   },
   "langEn": {
     "message": "English"
+  },
+  "popupEmpty": {
+    "message": "还没有固定任何网站"
+  },
+  "popupOpenNewTab": {
+    "message": "打开新标签页"
   }
 }

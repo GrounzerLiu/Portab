@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portab</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="i18n.js"></script>
+</head>
+<body>
+  <!-- 当前页面固定按钮 -->
+  <div id="pinSection" class="pin-section">
+    <div id="currentSite" class="current-site">
+      <img id="currentFavicon" class="current-favicon" src="" alt="">
+      <span id="currentTitle" class="current-title">加载中…</span>
+    </div>
+    <button id="pinBtn" class="pin-btn" data-pinned="false">
+      <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
+        <path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/>
+      </svg>
+      <span id="pinBtnText" data-i18n="tilePin">固定到首页</span>
+    </button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 已固定列表 -->
+  <div class="pinned-header">
+    <svg class="icon-sm" viewBox="0 -960 960 960" fill="currentColor">
+      <path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/>
+    </svg>
+    <span data-i18n="sectionPinned">已固定</span>
+    <span id="pinnedCount" class="pinned-count"></span>
+  </div>
+
+  <div id="pinnedList" class="pinned-list">
+    <div id="emptyState" class="empty-state" data-i18n="popupEmpty">还没有固定任何网站</div>
+  </div>
+
+  <div class="footer">
+    <button id="openNewTab" class="footer-btn" data-i18n="popupOpenNewTab">
+      <svg class="icon-sm" viewBox="0 -960 960 960" fill="currentColor">
+        <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/>
+      </svg>
+      打开新标签页
+    </button>
+  </div>
+
+  <script src="icons.js"></script>
+  <script src="favicon-cache.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

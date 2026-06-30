@@ -304,5 +304,11 @@
   },
   "langEn": {
     "message": "English"
+  },
+  "popupEmpty": {
+    "message": "No pinned sites yet"
+  },
+  "popupOpenNewTab": {
+    "message": "Open new tab"
   }
 }
