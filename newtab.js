@@ -402,15 +402,16 @@ const historyGrid = document.getElementById('historyGrid');
           var title = item.title || url;
           if (pinnedUrls.has(url)) return;
           var hostname = url.replace(/https?:\/\//, '').split('/')[0];
-          var path = url.replace(/https?:\/\/[^\/]+/, '').slice(0, 40) || '/';
+          var path = url.replace(/https?:\/\/[^\/]+/, '') || '/';
           var row = document.createElement('div');
           row.className = 'shortcut-result-item';
           row.innerHTML =
+            '<span class="shortcut-result-fav"><img src="' + faviconUrl(hostname) + '" onerror="this.style.display=\'none\'"><span class="shortcut-result-letter">' + (title[0] || hostname[0]).toUpperCase() + '</span></span>' +
             '<div class="shortcut-result-info">' +
-              '<span class="shortcut-result-title">' + title.slice(0, 50) + '</span>' +
+              '<span class="shortcut-result-title">' + title.slice(0, 80) + '</span>' +
               '<span class="shortcut-result-url">' + hostname + path + '</span>' +
             '</div>' +
-            '<button class="shortcut-result-pin">固定</button>';
+            '<button class="shortcut-result-pin"><svg class="icon-sm" viewBox="0 -960 960 960" fill="currentColor"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg></button>';
           row.querySelector('.shortcut-result-pin').addEventListener('click', function(e) {
             e.stopPropagation();
             togglePin({ url: url, title: title, hostname: hostname, favicon: '', visitCount: 1, bestPath: '/', displayTitle: '' });
