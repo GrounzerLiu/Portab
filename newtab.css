@@ -614,11 +614,10 @@ body.has-wallpaper .section-title {
 .shortcut-result-info { flex: 1; min-width: 0; }
 .shortcut-result-title {
   display: block; font-size: 13px; color: var(--text);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .shortcut-result-url {
   display: block; font-size: 11px; color: var(--text-muted);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px;
+  margin-top: 2px; word-break: break-all;
 }
 .shortcut-result-fav {
   position: relative; width: 24px; height: 24px; flex-shrink: 0;

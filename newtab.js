@@ -408,7 +408,7 @@ const historyGrid = document.getElementById('historyGrid');
           row.innerHTML =
             '<span class="shortcut-result-fav"><img src="' + faviconUrl(hostname) + '" onerror="this.style.display=\'none\'"><span class="shortcut-result-letter">' + (title[0] || hostname[0]).toUpperCase() + '</span></span>' +
             '<div class="shortcut-result-info">' +
-              '<span class="shortcut-result-title">' + title.slice(0, 80) + '</span>' +
+              '<span class="shortcut-result-title">' + title.slice(0, 120) + '</span>' +
               '<span class="shortcut-result-url">' + hostname + path + '</span>' +
             '</div>' +
             '<button class="shortcut-result-pin"><svg class="icon-sm" viewBox="0 -960 960 960" fill="currentColor"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg></button>';
