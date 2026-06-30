@@ -803,7 +803,6 @@ body.has-wallpaper .tile {
 
 .dialog {
   background: var(--surface);
-  border: 3px solid red;
   border-radius: 28px;
   overflow: hidden;
   width: 100%; max-width: 400px; max-height: 80vh;
