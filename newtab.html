@@ -138,16 +138,18 @@
     <div id="contentArea">
     <!-- 已固定 -->
     <div id="shortcuts" class="shortcuts-section">
-      <h3 class="section-title">
-        <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
-          <path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/>
-        </svg>
-        已固定
-        <button id="addShortcutBtn" class="add-shortcut-btn" title="添加快捷方式">
+      <div class="section-title-row">
+        <h3 class="section-title">
+          <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
+            <path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/>
+          </svg>
+          已固定
+          <span id="pinnedEmpty" class="empty-inline">还没有固定任何网站，点击历史记录中的 <svg class="icon" viewBox="0 -960 960 960" fill="currentColor"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg> 来固定</span>
+        </h3>
+        <button id="addShortcutBtn" class="add-shortcut-btn" title="添加">
           <svg class="icon-sm" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
         </button>
-        <span id="pinnedEmpty" class="empty-inline">还没有固定任何网站，点击历史记录中的 <svg class="icon" viewBox="0 -960 960 960" fill="currentColor"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg> 来固定</span>
-      </h3>
+      </div>
       <div id="pinnedExpand" class="grid-expand">
         <div id="pinnedGrid" class="grid"></div>
       </div>
@@ -320,7 +322,7 @@
   <div id="addShortcutOverlay" class="overlay hidden">
     <div class="dialog" role="dialog" aria-labelledby="addShortcutTitle">
       <div class="dialog-header">
-        <h2 id="addShortcutTitle" class="dialog-title">添加快捷方式</h2>
+        <h2 id="addShortcutTitle" class="dialog-title">搜索历史记录</h2>
         <button id="closeAddShortcut" class="icon-btn" title="关闭">
           <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
             <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>

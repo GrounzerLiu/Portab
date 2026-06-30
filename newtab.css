@@ -536,7 +536,7 @@ body.has-wallpaper .engine-dropdown {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-muted);
-  margin-bottom: 12px;
+  margin-bottom: 0;
   letter-spacing: .3px;
   display: flex;
   align-items: center;
@@ -551,6 +551,14 @@ body.has-wallpaper .section-title {
   padding: 4px 12px;
   border-radius: 20px;
   display: inline-flex;
+}
+
+.section-title-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+}
+body.has-wallpaper .section-title-row {
+  gap: 4px;
 }
 
 .add-shortcut-btn {
@@ -585,7 +593,6 @@ body.has-wallpaper .section-title {
   background: color-mix(in srgb, var(--surface2) 60%, transparent);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
   z-index: 0;
 }
 .add-shortcut-btn::after {
@@ -593,8 +600,14 @@ body.has-wallpaper .section-title {
   position: absolute;
   inset: 0;
   border-radius: inherit;
+  padding: 1px;
   background: radial-gradient(30px circle at var(--x, 50%) var(--y, 50%),
-    rgba(255,255,255,.15), transparent 60%);
+    rgba(255,255,255,.8), transparent 70%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
   opacity: var(--glow, 0);
   transition: opacity .15s ease;
   pointer-events: none;
