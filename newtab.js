@@ -1,5 +1,7 @@
 // ===== Portab - New Tab Page =====
 
+const WEEKDAY_KEYS = ['weekdaySun','weekdayMon','weekdayTue','weekdayWed','weekdayThu','weekdayFri','weekdaySat'];
+
 let pinnedUrls = new Set();
 let pinnedData = new Map();
 let cachedHistory = [];
@@ -98,10 +100,10 @@ const historyGrid = document.getElementById('historyGrid');
     if (e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.search-box')) return;
     searchBox.classList.remove('focused');
     document.body.classList.remove('search-focused');
-    if (!searchInput.value) searchPlaceholder.textContent = '搜索或输入网址…';
+    if (!searchInput.value) searchPlaceholder.textContent = _msg('searchPlaceholder');
   });
   searchInput.addEventListener('input', () => {
-    searchPlaceholder.textContent = searchInput.value || '搜索或输入网址…';
+    searchPlaceholder.textContent = searchInput.value || _msg('searchPlaceholder');
     searchPlaceholder.classList.toggle('has-text', !!searchInput.value);
     searchClear.classList.toggle('visible', !!searchInput.value);
   });
@@ -123,7 +125,7 @@ const historyGrid = document.getElementById('historyGrid');
   const searchClear = document.getElementById('searchClear');
   searchClear.addEventListener('click', () => {
     searchInput.value = '';
-    searchPlaceholder.textContent = '搜索或输入网址…';
+    searchPlaceholder.textContent = _msg('searchPlaceholder');
     searchPlaceholder.classList.remove('has-text');
     searchClear.classList.remove('visible');
     searchInput.focus();
@@ -167,17 +169,18 @@ const historyGrid = document.getElementById('historyGrid');
     if (window._clock24h !== false) {
       timeStr = String(h).padStart(2, '0') + ':' + m;
     } else {
-      var ampm = h >= 12 ? '下午' : '上午';
+      var ampm = h >= 12 ? _msg('ampmPM') : _msg('ampmAM');
       var h12 = h % 12 || 12;
-      timeStr = ampm + ' ' + h12 + ':' + m;
+      var isZh = (document.documentElement.lang || '').startsWith('zh');
+      timeStr = isZh ? (ampm + ' ' + h12 + ':' + m) : (h12 + ':' + m + ' ' + ampm);
     }
     var ct = document.getElementById('clockTime');
     var span = ct.querySelector('span');
     if (span) span.textContent = timeStr;
     ct.dataset.text = timeStr;
+    var lang = document.documentElement.lang || navigator.language || 'zh-CN';
     document.getElementById('clockDate').textContent = 
-      now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 星期' +
-      ['日', '一', '二', '三', '四', '五', '六'][now.getDay()];
+      new Intl.DateTimeFormat(lang, { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(now);
     if (window.updateClockLayout) window.updateClockLayout();
   }
   window.updateClockDisplay = updateClockDisplay;
@@ -412,8 +415,8 @@ const historyGrid = document.getElementById('historyGrid');
               '<span class="shortcut-result-title">' + title.slice(0, 120) + '</span>' +
               '<span class="shortcut-result-url">' + hostname + path + '</span>' +
             '</div>' +
-            '<button class="shortcut-result-open" title="在新标签页中打开">' + I.openInNew + '</button>' +
-            '<button class="shortcut-result-pin' + (isPinned ? ' pinned' : '') + '" title="' + (isPinned ? '取消固定' : '固定') + '">' + (isPinned ? I.close : I.pushPin) + '</button>';
+            '<button class="shortcut-result-open" title="' + _msg('shortcutOpenNewTab') + '">' + I.openInNew + '</button>' +
+            '<button class="shortcut-result-pin' + (isPinned ? ' pinned' : '') + '" title="' + (isPinned ? _msg('tileUnpin') : _msg('tilePin')) + '">' + (isPinned ? I.close : I.pushPin) + '</button>';
           row.querySelector('.shortcut-result-open').addEventListener('click', function(e) {
             e.stopPropagation();
             window.open(url, '_blank');
@@ -426,16 +429,16 @@ const historyGrid = document.getElementById('historyGrid');
             if (pinned) {
               btn.innerHTML = I.pushPin;
               btn.classList.remove('pinned');
-              btn.title = '固定';
+              btn.title = _msg('ctxPin');
             } else {
               btn.innerHTML = I.close;
               btn.classList.add('pinned');
-              btn.title = '取消固定';
+              btn.title = _msg('tileUnpin');
             }
           });
           results.appendChild(row);
         });
-        if (data.length === 0) results.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">无结果</div>';
+        if (data.length === 0) results.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">' + _msg('noResults') + '</div>';
       } catch(e) {}
     }, 300);
   });
@@ -690,7 +693,7 @@ function renderHistory(historyItems) {
   historyGrid.innerHTML = '';
 
   if (historyItems.length === 0) {
-    historyGrid.innerHTML = '<div class="empty">暂无历史记录</div>';
+    historyGrid.innerHTML = '<div class="empty">' + _msg('noHistory') + '</div>';
     return;
   }
 
@@ -712,7 +715,7 @@ function createTile(item, isPinned) {
   const tile = document.createElement('a');
   tile.className = 'tile' + (isPinned ? ' pinned' : '');
   tile.href = item.url;
-  tile.title = (item.title || '') + '\n' + item.url + (item.visitCount ? `\n访问 ${formatCount(item.visitCount)} 次` : '');
+  tile.title = (item.title || '') + '\n' + item.url + (item.visitCount ? '\n' + _msg('tileVisits', [formatCount(item.visitCount)]) : '');
   tile.dataset.visits = item.visitCount || 0;
 
   const iconDiv = document.createElement('div');
@@ -774,7 +777,7 @@ function createTile(item, isPinned) {
   const pinBtn = document.createElement('button');
   pinBtn.className = 'tile-pin';
   pinBtn.innerHTML = I.pushPin;
-  pinBtn.title = isPinned ? '取消固定' : '固定到首页';
+  pinBtn.title = isPinned ? _msg('tileUnpin') : _msg('tilePin');
   pinBtn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -785,7 +788,7 @@ function createTile(item, isPinned) {
   const hideBtn = document.createElement('button');
   hideBtn.className = 'tile-hide';
   hideBtn.innerHTML = I.close;
-  hideBtn.title = '不在主页显示';
+  hideBtn.title = _msg('tileHide');
   hideBtn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -813,7 +816,7 @@ async function togglePin(item) {
     if (tile) {
       // Convert from pinned to normal
       const pinBtn = tile.querySelector('.tile-pin');
-      if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = '固定到首页'; }
+      if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = _msg('tilePin'); }
       tile.classList.remove('pinned');
       const historyTiles = historyGrid.querySelectorAll('.tile');
       const historyCount = historyTiles.length;
@@ -835,7 +838,7 @@ async function togglePin(item) {
     const tile = document.querySelector(`#historyGrid .tile[href="${item.url}"]`);
     if (tile) {
       const pinBtn = tile.querySelector('.tile-pin');
-      if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = '取消固定'; }
+      if (pinBtn) { pinBtn.innerHTML = I.pushPin; pinBtn.title = _msg('tileUnpin'); }
       tile.classList.add('pinned');
       pinnedGrid.appendChild(tile);
       fillHistoryGap();
@@ -907,13 +910,13 @@ function showCtxMenu(x, y, tileEl) {
   const isPinned = tileEl.closest('#pinnedGrid') !== null;
   const hostname = new URL(tileEl.href).hostname;
   menu.innerHTML = '';
-  addCtxItem(menu, isPinned ? '取消固定' : '固定', () => {
+  addCtxItem(menu, isPinned ? _msg('ctxUnpin') : _msg('ctxPin'), () => {
     togglePin({ url: tileEl.href, title: ctxItem.title, hostname, favicon: '', visitCount: parseInt(tileEl.dataset.visits) || 0 });
   });
-  addCtxItem(menu, '在新标签页打开', () => window.open(tileEl.href));
-  addCtxItem(menu, '复制链接', () => navigator.clipboard.writeText(tileEl.href));
+  addCtxItem(menu, _msg('ctxOpenNewTab'), () => window.open(tileEl.href));
+  addCtxItem(menu, _msg('ctxCopyLink'), () => navigator.clipboard.writeText(tileEl.href));
   addCtxDivider(menu);
-  addCtxItem(menu, '屏蔽此站点', () => ignoreSite({ url: tileEl.href, hostname }), true);
+  addCtxItem(menu, _msg('ctxBlockSite'), () => ignoreSite({ url: tileEl.href, hostname }), true);
   const maxX = window.innerWidth - menu.offsetWidth;
   const maxY = window.innerHeight - menu.offsetHeight;
   menu.style.left = Math.min(x, maxX - 10) + 'px';
@@ -976,7 +979,7 @@ function simplifyTitle(title, hostname, pathname) {
 }
 
 function formatCount(n) {
-  if (n >= 10000) return (n / 10000).toFixed(1) + '万';
+  if (n >= 10000) return (n / 10000).toFixed(1) + _msg('unitWan');
   if (n >= 1000)  return (n / 1000).toFixed(1) + 'k';
   return String(n);
 }

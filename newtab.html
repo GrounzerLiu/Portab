@@ -11,6 +11,7 @@
   </style>
   <link rel="stylesheet" href="newtab.css">
   <link rel="modulepreload" href="color-utils.js">
+  <script src="i18n.js"></script>
 </head>
 <body>
   <!-- 壁纸背景层 -->
@@ -20,12 +21,12 @@
   <div id="ctxMenu" class="ctx-menu hidden"></div>
 
   <!-- 设置按钮 -->
-  <button id="refreshWallpaperBtn" class="refresh-wallpaper-btn" title="换一张壁纸" style="display:none">
+  <button id="refreshWallpaperBtn" class="refresh-wallpaper-btn" title="换一张壁纸" data-i18n-title="btnRefreshWallpaper" style="display:none">
     <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
       <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
     </svg>
   </button>
-  <button id="settingsBtn" class="settings-btn" title="设置">
+  <button id="settingsBtn" class="settings-btn" title="设置" data-i18n-title="btnSettings">
     <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
       <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
     </svg>
@@ -70,21 +71,21 @@
       <div class="clock-date" id="clockDate">---</div>
       <div id="clockPopup" class="clock-popup hidden">
         <div class="popup-row">
-          <span class="popup-label">字号</span>
+          <span class="popup-label" data-i18n="clockFontSize">字号</span>
           <div class="ms" id="clockFontSizeSlider" data-min="48" data-max="144" data-steps="0" data-value="72"><div class="ms-track-inactive"></div><div class="ms-track-active"></div><div class="ms-handle"></div></div><input type="hidden" id="clockFontSize" value="72">
           <span id="clockFontSizeVal" class="adv-val">72px</span>
         </div>
         <div class="popup-row">
-          <span class="popup-label">格式</span>
+          <span class="popup-label" data-i18n="clockFormat">格式</span>
           <div class="segmented-btn" role="radiogroup">
             <button class="seg-btn" data-clock-format="24h" role="radio" aria-checked="true">24h</button>
             <button class="seg-btn" data-clock-format="12h" role="radio">12h</button>
           </div>
         </div>
         <div class="popup-row">
-          <span class="popup-label">字体</span>
+          <span class="popup-label" data-i18n="clockFontFamily">字体</span>
           <select id="clockFontFamily" class="popup-select">
-            <option value="inherit">系统默认</option>
+            <option value="inherit" data-i18n="fontSystemDefault">系统默认</option>
             <option value="'Inter', -apple-system, sans-serif">Inter</option>
             <option value="'Georgia', serif">Serif</option>
             <option value="'Courier New', monospace">Monospace</option>
@@ -92,21 +93,21 @@
           </select>
         </div>
         <div class="popup-row">
-          <span class="popup-label">字重</span>
+          <span class="popup-label" data-i18n="clockWeight">字重</span>
           <div class="segmented-btn" role="radiogroup">
-            <button class="seg-btn" data-clock-weight="200" role="radio" aria-checked="true">纤细</button>
-            <button class="seg-btn" data-clock-weight="300" role="radio">轻体</button>
-            <button class="seg-btn" data-clock-weight="400" role="radio">常规</button>
-            <button class="seg-btn" data-clock-weight="600" role="radio">粗体</button>
+            <button class="seg-btn" data-clock-weight="200" role="radio" aria-checked="true" data-i18n="weightThin">纤细</button>
+            <button class="seg-btn" data-clock-weight="300" role="radio" data-i18n="weightLight">轻体</button>
+            <button class="seg-btn" data-clock-weight="400" role="radio" data-i18n="weightRegular">常规</button>
+            <button class="seg-btn" data-clock-weight="600" role="radio" data-i18n="weightBold">粗体</button>
           </div>
         </div>
         <div class="popup-row">
-          <span class="popup-label">上距</span>
+          <span class="popup-label" data-i18n="clockMarginTop">上距</span>
           <div class="ms" id="clockMarginTopSlider" data-min="0" data-max="120" data-steps="0" data-value="80"><div class="ms-track-inactive"></div><div class="ms-track-active"></div><div class="ms-handle"></div></div><input type="hidden" id="clockMarginTop" value="80">
           <span id="clockMarginTopVal" class="adv-val">80px</span>
         </div>
         <div class="popup-row">
-          <span class="popup-label">下距</span>
+          <span class="popup-label" data-i18n="clockMarginBottom">下距</span>
           <div class="ms" id="clockMarginBottomSlider" data-min="0" data-max="80" data-steps="0" data-value="24"><div class="ms-track-inactive"></div><div class="ms-track-active"></div><div class="ms-handle"></div></div><input type="hidden" id="clockMarginBottom" value="24">
           <span id="clockMarginBottomVal" class="adv-val">24px</span>
         </div>
@@ -114,7 +115,7 @@
     </div>
     <div class="search-wrapper">
       <div class="search-box">
-        <button id="engineBtn" class="engine-btn" title="切换搜索引擎">
+        <button id="engineBtn" class="engine-btn" title="切换搜索引擎" data-i18n-title="btnSwitchEngine">
           <img id="engineIcon" src="" alt="" style="display:none">
           <span id="engineIconFallback" class="engine-icon-fallback"></span>
         </button>
@@ -122,11 +123,11 @@
           <div id="engineList" class="engine-list"></div>
         </div>
         <input type="text" id="searchInput" class="search-input">
-        <span id="searchPlaceholder" class="search-placeholder">搜索或输入网址…</span>
-        <button id="searchClear" class="search-clear-btn" title="清除">
+        <span id="searchPlaceholder" class="search-placeholder" data-i18n="searchPlaceholder">搜索或输入网址…</span>
+        <button id="searchClear" class="search-clear-btn" title="清除" data-i18n-title="btnClear">
           <svg class="icon-sm" viewBox="0 -960 960 960" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
         </button>
-        <button id="searchBtn" class="search-right-btn" title="搜索">
+        <button id="searchBtn" class="search-right-btn" title="搜索" data-i18n-title="btnSearch">
           <svg class="search-right-icon" viewBox="0 -960 960 960" fill="currentColor">
           <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
         </svg>
@@ -143,10 +144,10 @@
           <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
             <path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/>
           </svg>
-          已固定
-          <span id="pinnedEmpty" class="empty-inline">还没有固定任何网站，点击历史记录中的 <svg class="icon" viewBox="0 -960 960 960" fill="currentColor"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg> 来固定</span>
+          <span data-i18n="sectionPinned">已固定</span>
+          <span id="pinnedEmpty" class="empty-inline" data-i18n="pinnedEmpty">还没有固定任何网站，点击历史记录中的图标来固定</span>
         </h3>
-        <button id="addShortcutBtn" class="add-shortcut-btn" title="添加">
+        <button id="addShortcutBtn" class="add-shortcut-btn" title="添加" data-i18n-title="btnAdd">
           <svg class="icon-sm" viewBox="0 -960 960 960" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
         </button>
       </div>
@@ -161,7 +162,7 @@
         <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
           <path d="m612-292 56-56-148-148v-184h-80v216l172 172ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160Z"/>
         </svg>
-        常用网站
+        <span data-i18n="sectionHistory">常用网站</span>
       </h3>
       <div id="historyGrid" class="grid"></div>
     </div>
@@ -172,8 +173,8 @@
   <div id="settingsOverlay" class="overlay hidden">
     <div class="dialog" role="dialog" aria-labelledby="dialogTitle">
       <div class="dialog-header">
-        <h2 id="dialogTitle" class="dialog-title">设置</h2>
-        <button id="closeDialog" class="icon-btn" title="关闭">
+        <h2 id="dialogTitle" class="dialog-title" data-i18n="dialogSettings">设置</h2>
+        <button id="closeDialog" class="icon-btn" title="关闭" data-i18n-title="btnClose">
           <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
             <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
           </svg>
@@ -181,73 +182,83 @@
       </div>
 
       <div class="dialog-body">
+        <!-- 语言 -->
+        <div class="setting-group">
+          <label class="setting-label" data-i18n="labelLanguage">语言</label>
+          <div class="segmented-btn" role="radiogroup" aria-label="language">
+            <button class="seg-btn" data-lang="auto" aria-checked="true" role="radio" data-i18n="langAuto">自动</button>
+            <button class="seg-btn" data-lang="zh_CN" role="radio" data-i18n="langZh">中文</button>
+            <button class="seg-btn" data-lang="en" role="radio" data-i18n="langEn">English</button>
+          </div>
+        </div>
+
         <!-- 主题 -->
         <div class="setting-group">
-          <label class="setting-label">主题</label>
-          <div class="segmented-btn" role="radiogroup" aria-label="主题选择">
+          <label class="setting-label" data-i18n="labelTheme">主题</label>
+          <div class="segmented-btn" role="radiogroup" aria-label="主题">
             <button class="seg-btn" data-theme-opt="dark" aria-checked="true" role="radio">
               <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
                 <path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/>
               </svg>
-              暗色
+              <span data-i18n="themeDark">暗色</span>
             </button>
             <button class="seg-btn" data-theme-opt="light" role="radio">
               <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
                 <path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/>
               </svg>
-              亮色
+              <span data-i18n="themeLight">亮色</span>
             </button>
             <button class="seg-btn" data-theme-opt="auto" role="radio">
               <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
                 <path d="M312-320h64l32-92h146l32 92h62L512-680h-64L312-320Zm114-144 52-150h4l52 150H426Zm54 436L346-160H160v-186L28-480l132-134v-186h186l134-132 134 132h186v186l132 134-132 134v186H614L480-28Zm0-112 100-100h140v-140l100-100-100-100v-140H580L480-820 380-720H240v140L140-480l100 100v140h140l100 100Zm0-340Z"/>
               </svg>
-              跟随系统
+              <span data-i18n="themeAuto">跟随系统</span>
             </button>
           </div>
         </div>
 
         <!-- 主题色 -->
         <div class="setting-group">
-          <label class="setting-label">主题色</label>
+          <label class="setting-label" data-i18n="labelAccentColor">主题色</label>
           <div id="colorPresets" class="color-presets"></div>
           <div class="color-custom-row">
             <input type="color" id="customSeedColor" class="color-pick" value="#4c9aff">
-            <label class="toggle-wrap" title="自动从壁纸取色">
+            <label class="toggle-wrap" title="自动从壁纸取色" data-i18n-title="autoExtractColorTitle">
               <input type="checkbox" id="autoExtractColor" class="toggle-switch">
               <span class="toggle-track"></span>
             </label>
-            <span style="font-size:12px;color:var(--text-muted)">自动取色</span>
+            <span style="font-size:12px;color:var(--text-muted)" data-i18n="autoExtractColor">自动取色</span>
           </div>
         </div>
 
         <!-- 搜索引擎 -->
         <div class="setting-group">
-          <label class="setting-label">搜索引擎</label>
+          <label class="setting-label" data-i18n="labelSearchEngine">搜索引擎</label>
           <div id="engineManager" class="engine-manager">
             <div id="engineCheckList" class="engine-check-list"></div>
             <div class="engine-add-row">
-              <input type="text" id="customEngineName" class="custom-url-input" placeholder="名称">
-              <input type="url" id="customEngineUrl" class="custom-url-input" placeholder="搜索 URL，用 {q} 代替查询词">
-              <button id="addEngineBtn" class="custom-file-btn">添加</button>
+              <input type="text" id="customEngineName" class="custom-url-input" placeholder="名称" data-i18n-placeholder="engineNamePlaceholder">
+              <input type="url" id="customEngineUrl" class="custom-url-input" placeholder="搜索 URL，用 {q} 代替查询词" data-i18n-placeholder="engineUrlPlaceholder">
+              <button id="addEngineBtn" class="custom-file-btn" data-i18n="btnAddEngine">添加</button>
             </div>
           </div>
         </div>
 
         <!-- 布局 -->
         <div class="setting-group">
-          <label class="setting-label">布局</label>
+          <label class="setting-label" data-i18n="labelLayout">布局</label>
           <div class="slider-row">
-            <span class="slider-label">列数</span>
+            <span class="slider-label" data-i18n="labelColumns">列数</span>
             <div class="ms" id="gridColsSlider" data-min="3" data-max="12" data-steps="10" data-value="6"><div class="ms-track-inactive"></div><div class="ms-track-active"></div><div class="ms-handle"></div></div><input type="hidden" id="gridCols" value="6">
             <span id="gridColsVal" class="adv-val">6</span>
           </div>
           <div class="slider-row">
-            <span class="slider-label">行数</span>
+            <span class="slider-label" data-i18n="labelRows">行数</span>
             <div class="ms" id="gridRowsSlider" data-min="1" data-max="6" data-steps="6" data-value="6"><div class="ms-track-inactive"></div><div class="ms-track-active"></div><div class="ms-handle"></div></div><input type="hidden" id="gridRows" value="6">
-            <span id="gridRowsVal" class="adv-val">自动</span>
+            <span id="gridRowsVal" class="adv-val" data-i18n="auto">自动</span>
           </div>
           <div class="slider-row">
-            <span class="slider-label">间距</span>
+            <span class="slider-label" data-i18n="labelGap">间距</span>
             <div class="ms" id="gridGapSlider" data-min="4" data-max="20" data-steps="0" data-value="10"><div class="ms-track-inactive"></div><div class="ms-track-active"></div><div class="ms-handle"></div></div><input type="hidden" id="gridGap" value="10">
             <span id="gridGapVal" class="adv-val">10px</span>
           </div>
@@ -255,32 +266,32 @@
 
         <!-- 历史范围 -->
         <div class="setting-group">
-          <label class="setting-label">历史范围</label>
+          <label class="setting-label" data-i18n="labelHistoryRange">历史范围</label>
           <div class="segmented-btn" role="radiogroup" aria-label="历史范围">
-            <button class="seg-btn" data-range="7" role="radio">7 天</button>
-            <button class="seg-btn" data-range="30" role="radio">30 天</button>
-            <button class="seg-btn" data-range="90" role="radio">90 天</button>
-            <button class="seg-btn" data-range="0" aria-checked="true" role="radio">全部</button>
+            <button class="seg-btn" data-range="7" role="radio" data-i18n="days7">7 天</button>
+            <button class="seg-btn" data-range="30" role="radio" data-i18n="days30">30 天</button>
+            <button class="seg-btn" data-range="90" role="radio" data-i18n="days90">90 天</button>
+            <button class="seg-btn" data-range="0" aria-checked="true" role="radio" data-i18n="all">全部</button>
           </div>
         </div>
 
         <!-- 壁纸 -->
         <div class="setting-group">
-          <label class="setting-label">壁纸</label>
-          <div class="segmented-btn" role="radiogroup" aria-label="壁纸选择">
-            <button class="seg-btn" data-wallpaper="none" aria-checked="true" role="radio">无</button>
-            <button class="seg-btn" data-wallpaper="bing" role="radio">必应</button>
-            <button class="seg-btn" data-wallpaper="picsum" role="radio">随机</button>
+          <label class="setting-label" data-i18n="labelWallpaper">壁纸</label>
+          <div class="segmented-btn" role="radiogroup" aria-label="壁纸">
+            <button class="seg-btn" data-wallpaper="none" aria-checked="true" role="radio" data-i18n="wallpaperNone">无</button>
+            <button class="seg-btn" data-wallpaper="bing" role="radio" data-i18n="wallpaperBing">必应</button>
+            <button class="seg-btn" data-wallpaper="picsum" role="radio" data-i18n="wallpaperRandom">随机</button>
             <button class="seg-btn" data-wallpaper="nasa" role="radio">NASA</button>
-            <button class="seg-btn" data-wallpaper="custom" role="radio">自定义</button>
+            <button class="seg-btn" data-wallpaper="custom" role="radio" data-i18n="wallpaperCustom">自定义</button>
           </div>
           <div id="customUrlWrap" class="custom-url-wrap hidden">
             <div class="custom-url-inner">
             <div class="custom-url-row">
-              <input type="url" id="customWallpaperUrl" class="custom-url-input" placeholder="输入图片 URL…">
-              <span class="custom-url-or">或</span>
+              <input type="url" id="customWallpaperUrl" class="custom-url-input" placeholder="输入图片 URL…" data-i18n-placeholder="wallpaperUrlPlaceholder">
+              <span class="custom-url-or" data-i18n="or">或</span>
               <input type="file" id="customWallpaperFile" class="custom-file-input" accept="image/*">
-              <label for="customWallpaperFile" class="custom-file-btn">选择文件</label>
+              <label for="customWallpaperFile" class="custom-file-btn" data-i18n="btnSelectFile">选择文件</label>
             </div>
             </div>
           </div>
@@ -289,17 +300,17 @@
           <div id="wallpaperAdvanced" class="wallpaper-advanced hidden">
             <div class="adv-inner">
             <div class="adv-row">
-              <label class="adv-label">遮罩</label>
+              <label class="adv-label" data-i18n="labelOverlay">遮罩</label>
               <label class="toggle-wrap"><input type="checkbox" id="overlayToggle" class="toggle-switch" checked><span class="toggle-track"></span></label>
               <input type="color" id="overlayColor" class="color-pick" value="#000000">
-              <span class="adv-sub">不透明</span>
+              <span class="adv-sub" data-i18n="subOpacity">不透明</span>
               <div class="ms" id="overlayOpacitySlider" data-min="0" data-max="100" data-steps="0" data-value="55"><div class="ms-track-inactive"></div><div class="ms-track-active"></div><div class="ms-handle"></div></div><input type="hidden" id="overlayOpacity" value="55">
               <span id="overlayOpacityVal" class="adv-val">55%</span>
             </div>
             <div class="adv-row">
-              <label class="adv-label">模糊</label>
+              <label class="adv-label" data-i18n="labelBlur">模糊</label>
               <label class="toggle-wrap"><input type="checkbox" id="blurToggle" class="toggle-switch"><span class="toggle-track"></span></label>
-              <span class="adv-sub">强度</span>
+              <span class="adv-sub" data-i18n="subIntensity">强度</span>
               <div class="ms" id="blurAmountSlider" data-min="0" data-max="40" data-steps="0" data-value="0"><div class="ms-track-inactive"></div><div class="ms-track-active"></div><div class="ms-handle"></div></div><input type="hidden" id="blurAmount" value="0">
               <span id="blurAmountVal" class="adv-val">0px</span>
             </div>
@@ -309,9 +320,9 @@
 
         <!-- 不显示列表 -->
         <div class="setting-group">
-          <label class="setting-label">不显示以下站点</label>
+          <label class="setting-label" data-i18n="labelHiddenSites">不显示以下站点</label>
           <div id="ignoreList" class="engine-check-list">
-            <div class="empty">还没有屏蔽任何站点</div>
+            <div class="empty" data-i18n="noHiddenSites">还没有屏蔽任何站点</div>
           </div>
         </div>
       </div>
@@ -322,8 +333,8 @@
   <div id="addShortcutOverlay" class="overlay hidden">
     <div class="dialog" role="dialog" aria-labelledby="addShortcutTitle">
       <div class="dialog-header">
-        <h2 id="addShortcutTitle" class="dialog-title">搜索历史记录</h2>
-        <button id="closeAddShortcut" class="icon-btn" title="关闭">
+        <h2 id="addShortcutTitle" class="dialog-title" data-i18n="dialogAddShortcut">搜索历史记录</h2>
+        <button id="closeAddShortcut" class="icon-btn" title="关闭" data-i18n-title="btnClose">
           <svg class="icon" viewBox="0 -960 960 960" fill="currentColor">
             <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
           </svg>
@@ -331,10 +342,10 @@
       </div>
       <div class="dialog-body">
         <div style="padding:12px 20px">
-          <input type="text" id="shortcutSearch" class="custom-url-input" placeholder="搜索历史记录…" style="width:100%">
+          <input type="text" id="shortcutSearch" class="custom-url-input" placeholder="搜索历史记录…" data-i18n-placeholder="shortcutSearchPlaceholder" style="width:100%">
         </div>
         <div id="shortcutResults" style="max-height:300px;overflow-y:auto;padding:0 0 12px"></div>
-        <div style="padding:0 20px 16px;font-size:12px;color:var(--text-muted);text-align:center" id="shortcutHint">输入关键词搜索已访问的网站，点击固定到首页</div>
+        <div style="padding:0 20px 16px;font-size:12px;color:var(--text-muted);text-align:center" id="shortcutHint" data-i18n="shortcutHint">输入关键词搜索已访问的网站，点击固定到首页</div>
       </div>
     </div>
   </div>

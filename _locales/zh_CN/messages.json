@@ -1,0 +1,308 @@
+{
+  "extDescription": {
+    "message": "Portab - 新标签页，搜索框 + 按访问次数排列的历史记录网格，支持固定常用站点"
+  },
+  "btnRefreshWallpaper": {
+    "message": "换一张壁纸"
+  },
+  "btnSettings": {
+    "message": "设置"
+  },
+  "btnSwitchEngine": {
+    "message": "切换搜索引擎"
+  },
+  "btnClear": {
+    "message": "清除"
+  },
+  "btnSearch": {
+    "message": "搜索"
+  },
+  "btnAdd": {
+    "message": "添加"
+  },
+  "btnClose": {
+    "message": "关闭"
+  },
+  "btnSelectFile": {
+    "message": "选择文件"
+  },
+  "btnAddEngine": {
+    "message": "添加"
+  },
+  "searchPlaceholder": {
+    "message": "搜索或输入网址…"
+  },
+  "sectionPinned": {
+    "message": "已固定"
+  },
+  "sectionHistory": {
+    "message": "常用网站"
+  },
+  "pinnedEmpty": {
+    "message": "还没有固定任何网站，点击历史记录中的图标来固定"
+  },
+  "dialogSettings": {
+    "message": "设置"
+  },
+  "labelTheme": {
+    "message": "主题"
+  },
+  "themeDark": {
+    "message": "暗色"
+  },
+  "themeLight": {
+    "message": "亮色"
+  },
+  "themeAuto": {
+    "message": "跟随系统"
+  },
+  "labelAccentColor": {
+    "message": "主题色"
+  },
+  "autoExtractColor": {
+    "message": "自动取色"
+  },
+  "autoExtractColorTitle": {
+    "message": "自动从壁纸取色"
+  },
+  "labelSearchEngine": {
+    "message": "搜索引擎"
+  },
+  "engineNamePlaceholder": {
+    "message": "名称"
+  },
+  "engineUrlPlaceholder": {
+    "message": "搜索 URL，用 {q} 代替查询词"
+  },
+  "labelLayout": {
+    "message": "布局"
+  },
+  "labelColumns": {
+    "message": "列数"
+  },
+  "labelRows": {
+    "message": "行数"
+  },
+  "labelGap": {
+    "message": "间距"
+  },
+  "auto": {
+    "message": "自动"
+  },
+  "labelHistoryRange": {
+    "message": "历史范围"
+  },
+  "days7": {
+    "message": "7 天"
+  },
+  "days30": {
+    "message": "30 天"
+  },
+  "days90": {
+    "message": "90 天"
+  },
+  "all": {
+    "message": "全部"
+  },
+  "labelWallpaper": {
+    "message": "壁纸"
+  },
+  "wallpaperNone": {
+    "message": "无"
+  },
+  "wallpaperBing": {
+    "message": "必应"
+  },
+  "wallpaperRandom": {
+    "message": "随机"
+  },
+  "wallpaperCustom": {
+    "message": "自定义"
+  },
+  "wallpaperUrlPlaceholder": {
+    "message": "输入图片 URL…"
+  },
+  "or": {
+    "message": "或"
+  },
+  "labelOverlay": {
+    "message": "遮罩"
+  },
+  "subOpacity": {
+    "message": "不透明"
+  },
+  "labelBlur": {
+    "message": "模糊"
+  },
+  "subIntensity": {
+    "message": "强度"
+  },
+  "labelHiddenSites": {
+    "message": "不显示以下站点"
+  },
+  "noHiddenSites": {
+    "message": "还没有屏蔽任何站点"
+  },
+  "dialogAddShortcut": {
+    "message": "搜索历史记录"
+  },
+  "shortcutSearchPlaceholder": {
+    "message": "搜索历史记录…"
+  },
+  "shortcutHint": {
+    "message": "输入关键词搜索已访问的网站，点击固定到首页"
+  },
+  "colorBlue": {
+    "message": "蓝"
+  },
+  "colorIndigo": {
+    "message": "靛"
+  },
+  "colorPurple": {
+    "message": "紫"
+  },
+  "colorPink": {
+    "message": "粉"
+  },
+  "colorRed": {
+    "message": "红"
+  },
+  "colorOrange": {
+    "message": "橙"
+  },
+  "colorGreen": {
+    "message": "绿"
+  },
+  "colorTeal": {
+    "message": "青"
+  },
+  "clockFontSize": {
+    "message": "字号"
+  },
+  "clockFormat": {
+    "message": "格式"
+  },
+  "clockFontFamily": {
+    "message": "字体"
+  },
+  "fontSystemDefault": {
+    "message": "系统默认"
+  },
+  "clockWeight": {
+    "message": "字重"
+  },
+  "weightThin": {
+    "message": "纤细"
+  },
+  "weightLight": {
+    "message": "轻体"
+  },
+  "weightRegular": {
+    "message": "常规"
+  },
+  "weightBold": {
+    "message": "粗体"
+  },
+  "clockMarginTop": {
+    "message": "上距"
+  },
+  "clockMarginBottom": {
+    "message": "下距"
+  },
+  "tileVisits": {
+    "message": "访问 $1 次"
+  },
+  "tilePin": {
+    "message": "固定到首页"
+  },
+  "tileUnpin": {
+    "message": "取消固定"
+  },
+  "tileHide": {
+    "message": "不在主页显示"
+  },
+  "ctxPin": {
+    "message": "固定"
+  },
+  "ctxUnpin": {
+    "message": "取消固定"
+  },
+  "ctxOpenNewTab": {
+    "message": "在新标签页打开"
+  },
+  "ctxCopyLink": {
+    "message": "复制链接"
+  },
+  "ctxBlockSite": {
+    "message": "屏蔽此站点"
+  },
+  "shortcutOpenNewTab": {
+    "message": "在新标签页中打开"
+  },
+  "noResults": {
+    "message": "无结果"
+  },
+  "noHistory": {
+    "message": "暂无历史记录"
+  },
+  "deleteEngine": {
+    "message": "删除"
+  },
+  "restoreSite": {
+    "message": "恢复显示"
+  },
+  "dateYear": {
+    "message": "年"
+  },
+  "dateMonth": {
+    "message": "月"
+  },
+  "dateDay": {
+    "message": "日"
+  },
+  "dateWeekday": {
+    "message": "星期"
+  },
+  "weekdaySun": {
+    "message": "日"
+  },
+  "weekdayMon": {
+    "message": "一"
+  },
+  "weekdayTue": {
+    "message": "二"
+  },
+  "weekdayWed": {
+    "message": "三"
+  },
+  "weekdayThu": {
+    "message": "四"
+  },
+  "weekdayFri": {
+    "message": "五"
+  },
+  "weekdaySat": {
+    "message": "六"
+  },
+  "ampmAM": {
+    "message": "上午"
+  },
+  "ampmPM": {
+    "message": "下午"
+  },
+  "unitWan": {
+    "message": "万"
+  },
+  "labelLanguage": {
+    "message": "语言"
+  },
+  "langAuto": {
+    "message": "自动"
+  },
+  "langZh": {
+    "message": "中文"
+  },
+  "langEn": {
+    "message": "English"
+  }
+}

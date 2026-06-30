@@ -1,0 +1,308 @@
+{
+  "extDescription": {
+    "message": "Portab - New tab page with search box + history grid sorted by visits, pin your favorite sites"
+  },
+  "btnRefreshWallpaper": {
+    "message": "Next wallpaper"
+  },
+  "btnSettings": {
+    "message": "Settings"
+  },
+  "btnSwitchEngine": {
+    "message": "Switch search engine"
+  },
+  "btnClear": {
+    "message": "Clear"
+  },
+  "btnSearch": {
+    "message": "Search"
+  },
+  "btnAdd": {
+    "message": "Add"
+  },
+  "btnClose": {
+    "message": "Close"
+  },
+  "btnSelectFile": {
+    "message": "Choose file"
+  },
+  "btnAddEngine": {
+    "message": "Add"
+  },
+  "searchPlaceholder": {
+    "message": "Search or enter URL…"
+  },
+  "sectionPinned": {
+    "message": "Pinned"
+  },
+  "sectionHistory": {
+    "message": "Frequently visited"
+  },
+  "pinnedEmpty": {
+    "message": "No pinned sites yet. Click the icon in history to pin"
+  },
+  "dialogSettings": {
+    "message": "Settings"
+  },
+  "labelTheme": {
+    "message": "Theme"
+  },
+  "themeDark": {
+    "message": "Dark"
+  },
+  "themeLight": {
+    "message": "Light"
+  },
+  "themeAuto": {
+    "message": "System"
+  },
+  "labelAccentColor": {
+    "message": "Accent color"
+  },
+  "autoExtractColor": {
+    "message": "Auto extract"
+  },
+  "autoExtractColorTitle": {
+    "message": "Auto extract color from wallpaper"
+  },
+  "labelSearchEngine": {
+    "message": "Search engine"
+  },
+  "engineNamePlaceholder": {
+    "message": "Name"
+  },
+  "engineUrlPlaceholder": {
+    "message": "Search URL, use {q} for query"
+  },
+  "labelLayout": {
+    "message": "Layout"
+  },
+  "labelColumns": {
+    "message": "Columns"
+  },
+  "labelRows": {
+    "message": "Rows"
+  },
+  "labelGap": {
+    "message": "Gap"
+  },
+  "auto": {
+    "message": "Auto"
+  },
+  "labelHistoryRange": {
+    "message": "History range"
+  },
+  "days7": {
+    "message": "7 days"
+  },
+  "days30": {
+    "message": "30 days"
+  },
+  "days90": {
+    "message": "90 days"
+  },
+  "all": {
+    "message": "All"
+  },
+  "labelWallpaper": {
+    "message": "Wallpaper"
+  },
+  "wallpaperNone": {
+    "message": "None"
+  },
+  "wallpaperBing": {
+    "message": "Bing"
+  },
+  "wallpaperRandom": {
+    "message": "Random"
+  },
+  "wallpaperCustom": {
+    "message": "Custom"
+  },
+  "wallpaperUrlPlaceholder": {
+    "message": "Enter image URL…"
+  },
+  "or": {
+    "message": "or"
+  },
+  "labelOverlay": {
+    "message": "Overlay"
+  },
+  "subOpacity": {
+    "message": "Opacity"
+  },
+  "labelBlur": {
+    "message": "Blur"
+  },
+  "subIntensity": {
+    "message": "Intensity"
+  },
+  "labelHiddenSites": {
+    "message": "Hidden sites"
+  },
+  "noHiddenSites": {
+    "message": "No hidden sites"
+  },
+  "dialogAddShortcut": {
+    "message": "Search history"
+  },
+  "shortcutSearchPlaceholder": {
+    "message": "Search history…"
+  },
+  "shortcutHint": {
+    "message": "Type to search visited sites, click to pin to homepage"
+  },
+  "colorBlue": {
+    "message": "Blue"
+  },
+  "colorIndigo": {
+    "message": "Indigo"
+  },
+  "colorPurple": {
+    "message": "Purple"
+  },
+  "colorPink": {
+    "message": "Pink"
+  },
+  "colorRed": {
+    "message": "Red"
+  },
+  "colorOrange": {
+    "message": "Orange"
+  },
+  "colorGreen": {
+    "message": "Green"
+  },
+  "colorTeal": {
+    "message": "Teal"
+  },
+  "clockFontSize": {
+    "message": "Size"
+  },
+  "clockFormat": {
+    "message": "Format"
+  },
+  "clockFontFamily": {
+    "message": "Font"
+  },
+  "fontSystemDefault": {
+    "message": "System default"
+  },
+  "clockWeight": {
+    "message": "Weight"
+  },
+  "weightThin": {
+    "message": "Thin"
+  },
+  "weightLight": {
+    "message": "Light"
+  },
+  "weightRegular": {
+    "message": "Regular"
+  },
+  "weightBold": {
+    "message": "Bold"
+  },
+  "clockMarginTop": {
+    "message": "Top"
+  },
+  "clockMarginBottom": {
+    "message": "Bottom"
+  },
+  "tileVisits": {
+    "message": "$1 visits"
+  },
+  "tilePin": {
+    "message": "Pin to homepage"
+  },
+  "tileUnpin": {
+    "message": "Unpin"
+  },
+  "tileHide": {
+    "message": "Hide from homepage"
+  },
+  "ctxPin": {
+    "message": "Pin"
+  },
+  "ctxUnpin": {
+    "message": "Unpin"
+  },
+  "ctxOpenNewTab": {
+    "message": "Open in new tab"
+  },
+  "ctxCopyLink": {
+    "message": "Copy link"
+  },
+  "ctxBlockSite": {
+    "message": "Hide this site"
+  },
+  "shortcutOpenNewTab": {
+    "message": "Open in new tab"
+  },
+  "noResults": {
+    "message": "No results"
+  },
+  "noHistory": {
+    "message": "No history yet"
+  },
+  "deleteEngine": {
+    "message": "Delete"
+  },
+  "restoreSite": {
+    "message": "Restore"
+  },
+  "dateYear": {
+    "message": "/"
+  },
+  "dateMonth": {
+    "message": "/"
+  },
+  "dateDay": {
+    "message": ""
+  },
+  "dateWeekday": {
+    "message": ", "
+  },
+  "weekdaySun": {
+    "message": "Sunday"
+  },
+  "weekdayMon": {
+    "message": "Monday"
+  },
+  "weekdayTue": {
+    "message": "Tuesday"
+  },
+  "weekdayWed": {
+    "message": "Wednesday"
+  },
+  "weekdayThu": {
+    "message": "Thursday"
+  },
+  "weekdayFri": {
+    "message": "Friday"
+  },
+  "weekdaySat": {
+    "message": "Saturday"
+  },
+  "ampmAM": {
+    "message": "AM"
+  },
+  "ampmPM": {
+    "message": "PM"
+  },
+  "unitWan": {
+    "message": "k"
+  },
+  "labelLanguage": {
+    "message": "Language"
+  },
+  "langAuto": {
+    "message": "Auto"
+  },
+  "langZh": {
+    "message": "中文"
+  },
+  "langEn": {
+    "message": "English"
+  }
+}

@@ -64,6 +64,27 @@ function initSettings() {
     if (e.target === settingsOverlay) closeSettings();
   });
 
+  // Language selector
+  const langBtns = document.querySelectorAll('.seg-btn[data-lang]');
+  if (langBtns.length) {
+    chrome.storage.local.get('language', (r) => {
+      const current = r.language || 'auto';
+      langBtns.forEach(b => b.setAttribute('aria-checked', b.dataset.lang === current ? 'true' : 'false'));
+    });
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        langBtns.forEach(b => b.setAttribute('aria-checked', 'false'));
+        btn.setAttribute('aria-checked', 'true');
+        const lang = btn.dataset.lang;
+        if (typeof changeLanguage === 'function') {
+          changeLanguage(lang, () => location.reload());
+        } else {
+          chrome.storage.local.set({ language: lang }, () => location.reload());
+        }
+      });
+    });
+  }
+
   // Refresh wallpaper button
   const refreshBtn = document.getElementById('refreshWallpaperBtn');
   if (refreshBtn) {
@@ -131,7 +152,7 @@ function initSettings() {
   // Grid rows
   gridRowsInp.addEventListener('ms-change', (e) => {
     gridRows = Math.round(e.detail.value);
-    gridRowsVal.textContent = gridRows >= 6 ? '自动' : gridRows;
+    gridRowsVal.textContent = gridRows >= 6 ? _msg('auto') : gridRows;
   });
   gridRowsInp.addEventListener('ms-change-final', (e) => {
     gridRows = Math.round(e.detail.value);
@@ -488,7 +509,7 @@ async function loadGrid() {
     gridRows = result.gridRows;
     if (window.MSSlider) MSSlider.setValue(gridRowsInp, gridRows);
     else gridRowsInp.value = gridRows;
-    gridRowsVal.textContent = gridRows >= 6 ? '自动' : gridRows;
+    gridRowsVal.textContent = gridRows >= 6 ? _msg('auto') : gridRows;
   }
   if (result.gridGap) {
     gridGap = result.gridGap;
@@ -940,7 +961,7 @@ function buildEngineCheckList() {
       '<label class="checkbox-wrap"><input type="checkbox" checked disabled><span class="checkbox-box"></span></label>' +
       '<span class="eng-icon-wrap"><img><span class="eng-icon-fallback">' + c.name[0] + '</span></span>' +
       '<span class="eng-name">' + c.name + '</span>' +
-      '<button class="del-engine" data-idx="' + i + '" title="删除">✕</button>';
+      '<button class="del-engine" data-idx="' + i + '" title="' + _msg('deleteEngine') + '">✕</button>';
     setupEngineIcon(row.querySelector('img'), domain);
     row.querySelector('.del-engine').addEventListener('click', () => {
       customEngines.splice(i, 1);
@@ -1013,14 +1034,14 @@ function updateEngineUI() {
 
 // ===== Color =====
 const COLOR_PRESETS = [
-  { name: '蓝', hex: '#4c9aff' },
-  { name: '靛', hex: '#5c6bc0' },
-  { name: '紫', hex: '#7c4dff' },
-  { name: '粉', hex: '#e91e63' },
-  { name: '红', hex: '#e53935' },
-  { name: '橙', hex: '#ff9100' },
-  { name: '绿', hex: '#4caf50' },
-  { name: '青', hex: '#009688' },
+  { nameKey: 'colorBlue', hex: '#4c9aff' },
+  { nameKey: 'colorIndigo', hex: '#5c6bc0' },
+  { nameKey: 'colorPurple', hex: '#7c4dff' },
+  { nameKey: 'colorPink', hex: '#e91e63' },
+  { nameKey: 'colorRed', hex: '#e53935' },
+  { nameKey: 'colorOrange', hex: '#ff9100' },
+  { nameKey: 'colorGreen', hex: '#4caf50' },
+  { nameKey: 'colorTeal', hex: '#009688' },
 ];
 
 function buildColorPresets() {
@@ -1030,7 +1051,7 @@ function buildColorPresets() {
     btn.className = 'color-preset';
     btn.dataset.hex = p.hex;
     btn.style.backgroundColor = p.hex;
-    btn.title = p.name;
+    btn.title = _msg(p.nameKey);
     btn.addEventListener('click', () => setSeedColor(p.hex));
     if (p.hex === seedColor) btn.classList.add('active');
     colorPresets.appendChild(btn);
@@ -1067,13 +1088,13 @@ function buildIgnoreList() {
   if (!list) return;
   list.innerHTML = '';
   if (!ignoredUrls || ignoredUrls.length === 0) {
-    list.innerHTML = '<div class="empty">还没有屏蔽任何站点</div>';
+    list.innerHTML = '<div class="empty">' + _msg('noHiddenSites') + '</div>';
     return;
   }
   ignoredUrls.forEach((url, i) => {
     const row = document.createElement('div');
     row.className = 'engine-check-row';
-    row.innerHTML = '<span class="eng-name">' + url + '</span><button class="del-engine" data-idx="' + i + '" title="恢复显示">✕</button>';
+    row.innerHTML = '<span class="eng-name">' + url + '</span><button class="del-engine" data-idx="' + i + '" title="' + _msg('restoreSite') + '">✕</button>';
     row.querySelector('.del-engine').addEventListener('click', () => {
       ignoredUrls.splice(i, 1);
       chrome.storage.local.set({ ignoredUrls });
