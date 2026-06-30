@@ -605,6 +605,28 @@ body.has-wallpaper .section-title {
   background: color-mix(in srgb, var(--surface2) 75%, transparent);
 }
 
+.shortcut-result-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px; cursor: pointer;
+  transition: background .15s ease-out;
+}
+.shortcut-result-item:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.shortcut-result-info { flex: 1; min-width: 0; }
+.shortcut-result-title {
+  display: block; font-size: 13px; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.shortcut-result-url {
+  display: block; font-size: 11px; color: var(--text-muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px;
+}
+.shortcut-result-pin {
+  flex-shrink: 0; font-size: 12px; color: var(--accent); background: var(--accent-bg);
+  border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer;
+  transition: background .15s ease-out;
+}
+.shortcut-result-pin:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+
 .shortcuts-section { margin-bottom: 20px; }
 .shortcuts-section.is-empty { margin-bottom: 8px; }
 .shortcuts-section.is-empty .section-title { margin-bottom: 4px; }

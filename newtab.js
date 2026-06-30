@@ -402,12 +402,20 @@ const historyGrid = document.getElementById('historyGrid');
           var title = item.title || url;
           if (pinnedUrls.has(url)) return;
           var hostname = url.replace(/https?:\/\//, '').split('/')[0];
+          var path = url.replace(/https?:\/\/[^\/]+/, '').slice(0, 40) || '/';
           var row = document.createElement('div');
-          row.className = 'ctx-item';
-          row.innerHTML = '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + title.slice(0, 60) + '</span><span style="font-size:11px;color:var(--text-muted);flex-shrink:0">固定</span>';
-          row.addEventListener('click', function() {
+          row.className = 'shortcut-result-item';
+          row.innerHTML =
+            '<div class="shortcut-result-info">' +
+              '<span class="shortcut-result-title">' + title.slice(0, 50) + '</span>' +
+              '<span class="shortcut-result-url">' + hostname + path + '</span>' +
+            '</div>' +
+            '<button class="shortcut-result-pin">固定</button>';
+          row.querySelector('.shortcut-result-pin').addEventListener('click', function(e) {
+            e.stopPropagation();
             togglePin({ url: url, title: title, hostname: hostname, favicon: '', visitCount: 1, bestPath: '/', displayTitle: '' });
-            row.innerHTML = '<span style="flex:1;color:var(--accent)">已固定</span>';
+            row.querySelector('.shortcut-result-pin').textContent = '已固定';
+            row.querySelector('.shortcut-result-pin').style.color = 'var(--accent)';
           });
           results.appendChild(row);
         });
