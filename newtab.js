@@ -368,10 +368,53 @@ const historyGrid = document.getElementById('historyGrid');
     addBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       addOverlay.classList.remove('hidden');
+      var si = document.getElementById('shortcutSearch');
+      if (si) { si.value = ''; si.focus(); }
+      var sr = document.getElementById('shortcutResults');
+      if (sr) sr.innerHTML = '';
+      var sh = document.getElementById('shortcutHint');
+      if (sh) sh.style.display = '';
     });
     if (closeAddBtn) closeAddBtn.addEventListener('click', function() { addOverlay.classList.add('hidden'); });
     addOverlay.addEventListener('click', function(e) { if (e.target === addOverlay) addOverlay.classList.add('hidden'); });
   }
+})();
+
+// ===== Add Shortcut Search =====
+(function() {
+  var inp = document.getElementById('shortcutSearch');
+  var results = document.getElementById('shortcutResults');
+  var hint = document.getElementById('shortcutHint');
+  var timer = null;
+  if (!inp || !results) return;
+
+  inp.addEventListener('input', function() {
+    clearTimeout(timer);
+    var q = inp.value.trim();
+    if (q.length < 2) { results.innerHTML = ''; hint.style.display = ''; return; }
+    timer = setTimeout(async function() {
+      try {
+        var data = await chrome.history.search({ text: q, maxResults: 20, startTime: 0 });
+        hint.style.display = 'none';
+        results.innerHTML = '';
+        data.forEach(function(item) {
+          var url = item.url || '';
+          var title = item.title || url;
+          if (pinnedUrls.has(url)) return;
+          var hostname = url.replace(/https?:\/\//, '').split('/')[0];
+          var row = document.createElement('div');
+          row.className = 'ctx-item';
+          row.innerHTML = '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + title.slice(0, 60) + '</span><span style="font-size:11px;color:var(--text-muted);flex-shrink:0">固定</span>';
+          row.addEventListener('click', function() {
+            togglePin({ url: url, title: title, hostname: hostname, favicon: '', visitCount: 1, bestPath: '/', displayTitle: '' });
+            row.innerHTML = '<span style="flex:1;color:var(--accent)">已固定</span>';
+          });
+          results.appendChild(row);
+        });
+        if (data.length === 0) results.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">无结果</div>';
+      } catch(e) {}
+    }, 300);
+  });
 })();
 
 // ===== Settings =====
