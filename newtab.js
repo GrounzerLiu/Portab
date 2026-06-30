@@ -158,6 +158,16 @@ const historyGrid = document.getElementById('historyGrid');
     if (!e.target.closest('.search-wrapper') && !e.target.closest('.suggest-dropdown')) searchInput.blur();
   });
 
+  // ===== Add Shortcut Dialog =====
+  var addBtn = document.getElementById('addShortcutBtn');
+  var addOverlay = document.getElementById('addShortcutOverlay');
+  var closeAddBtn = document.getElementById('closeAddShortcut');
+  if (addBtn && addOverlay) {
+    addBtn.addEventListener('click', function() { addOverlay.classList.remove('hidden'); });
+    if (closeAddBtn) closeAddBtn.addEventListener('click', function() { addOverlay.classList.add('hidden'); });
+    addOverlay.addEventListener('click', function(e) { if (e.target === addOverlay) addOverlay.classList.add('hidden'); });
+  }
+
   // ===== Clock =====
   function updateClockDisplay() {
     var now = new Date();
@@ -274,7 +284,7 @@ const historyGrid = document.getElementById('historyGrid');
   // 缓存 spotlight 目标元素（卡片、搜索框等），卡片变化后刷新
   var _spotlightEls = null;
   function _getSpotlightEls() {
-    if (!_spotlightEls) _spotlightEls = document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn');
+    if (!_spotlightEls) _spotlightEls = document.querySelectorAll('.tile, .search-box, .settings-btn, .refresh-wallpaper-btn, .add-shortcut-btn');
     return _spotlightEls;
   }
   function _refreshSpotlightEls() { _spotlightEls = null; }

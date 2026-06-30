@@ -553,6 +553,58 @@ body.has-wallpaper .section-title {
   display: inline-flex;
 }
 
+.add-shortcut-btn {
+  --spotlight-range: 20px;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  isolation: isolate;
+  margin-left: auto;
+}
+.add-shortcut-btn .icon-sm {
+  position: relative;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+}
+.add-shortcut-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--surface2) 60%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  z-index: 0;
+}
+.add-shortcut-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(30px circle at var(--x, 50%) var(--y, 50%),
+    rgba(255,255,255,.15), transparent 60%);
+  opacity: var(--glow, 0);
+  transition: opacity .15s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.add-shortcut-btn:hover { color: var(--text); }
+.add-shortcut-btn:hover::before {
+  background: color-mix(in srgb, var(--surface2) 75%, transparent);
+}
+
 .shortcuts-section { margin-bottom: 20px; }
 .shortcuts-section.is-empty { margin-bottom: 8px; }
 .shortcuts-section.is-empty .section-title { margin-bottom: 4px; }
