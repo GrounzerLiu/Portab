@@ -405,23 +405,33 @@ const historyGrid = document.getElementById('historyGrid');
           var path = url.replace(/https?:\/\/[^\/]+/, '') || '/';
           var row = document.createElement('div');
           row.className = 'shortcut-result-item';
+          var isPinned = pinnedUrls.has(url);
           row.innerHTML =
             '<span class="shortcut-result-fav"><img src="' + faviconUrl(hostname) + '" onerror="this.style.display=\'none\'"><span class="shortcut-result-letter">' + (title[0] || hostname[0]).toUpperCase() + '</span></span>' +
             '<div class="shortcut-result-info">' +
               '<span class="shortcut-result-title">' + title.slice(0, 120) + '</span>' +
               '<span class="shortcut-result-url">' + hostname + path + '</span>' +
             '</div>' +
-            '<button class="shortcut-result-open" title="在新标签页中打开"><svg viewBox="0 -960 960 960" fill="currentColor" width="16" height="16"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg></button>' +
-            '<button class="shortcut-result-pin"><svg class="icon-sm" viewBox="0 -960 960 960" fill="currentColor"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg></button>';
+            '<button class="shortcut-result-open" title="在新标签页中打开">' + I.openInNew + '</button>' +
+            '<button class="shortcut-result-pin' + (isPinned ? ' pinned' : '') + '" title="' + (isPinned ? '取消固定' : '固定') + '">' + (isPinned ? I.close : I.pushPin) + '</button>';
           row.querySelector('.shortcut-result-open').addEventListener('click', function(e) {
             e.stopPropagation();
             window.open(url, '_blank');
           });
           row.querySelector('.shortcut-result-pin').addEventListener('click', function(e) {
             e.stopPropagation();
+            var pinned = pinnedUrls.has(url);
             togglePin({ url: url, title: title, hostname: hostname, favicon: '', visitCount: 1, bestPath: '/', displayTitle: '' });
-            row.querySelector('.shortcut-result-pin').textContent = '已固定';
-            row.querySelector('.shortcut-result-pin').style.color = 'var(--accent)';
+            var btn = row.querySelector('.shortcut-result-pin');
+            if (pinned) {
+              btn.innerHTML = I.pushPin;
+              btn.classList.remove('pinned');
+              btn.title = '固定';
+            } else {
+              btn.innerHTML = I.close;
+              btn.classList.add('pinned');
+              btn.title = '取消固定';
+            }
           });
           results.appendChild(row);
         });

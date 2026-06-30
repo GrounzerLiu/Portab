@@ -644,7 +644,10 @@ body.has-wallpaper .section-title {
   transition: background .15s ease-out;
 }
 .shortcut-result-pin:hover { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+.shortcut-result-pin.pinned { color: var(--red); background: var(--red-bg); }
+.shortcut-result-pin.pinned:hover { background: color-mix(in srgb, var(--red) 20%, transparent); }
 .shortcut-result-pin .icon-sm { width: 16px; height: 16px; }
+.shortcut-result-open .icon-sm { width: 16px; height: 16px; }
 
 .shortcuts-section { margin-bottom: 20px; }
 .shortcuts-section.is-empty { margin-bottom: 8px; }

@@ -17,6 +17,8 @@ I.lightMode = '<svg class="icon" viewBox="0 -960 960 960" fill="currentColor"><p
 
 I.brightnessAuto = '<svg class="icon" viewBox="0 -960 960 960" fill="currentColor"><path d="M312-320h64l32-92h146l32 92h62L512-680h-64L312-320Zm114-144 52-150h4l52 150H426Zm54 436L346-160H160v-186L28-480l132-134v-186h186l134-132 134 132h186v186l132 134-132 134v186H614L480-28Zm0-112 100-100h140v-140l100-100-100-100v-140H580L480-820 380-720H240v140L140-480l100 100v140h140l100 100Zm0-340Z"/></svg>';
 
+I.openInNew = '<svg class="icon-sm" viewBox="0 -960 960 960" fill="currentColor"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>';
+
 // Favicon helper — try multiple CDN sources for reliability in China
 function faviconUrl(domain, size = 32) {
   // Direct /favicon.ico works for most sites and doesn't depend on any CDN
