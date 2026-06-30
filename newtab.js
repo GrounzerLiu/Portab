@@ -163,9 +163,9 @@ const historyGrid = document.getElementById('historyGrid');
   var addOverlay = document.getElementById('addShortcutOverlay');
   var closeAddBtn = document.getElementById('closeAddShortcut');
   if (addBtn && addOverlay) {
-    addBtn.addEventListener('click', function() { addOverlay.classList.remove('hidden'); });
-    if (closeAddBtn) closeAddBtn.addEventListener('click', function() { addOverlay.classList.add('hidden'); });
-    addOverlay.addEventListener('click', function(e) { if (e.target === addOverlay) addOverlay.classList.add('hidden'); });
+    addBtn.onclick = function() { addOverlay.classList.remove('hidden'); };
+    if (closeAddBtn) closeAddBtn.onclick = function() { addOverlay.classList.add('hidden'); };
+    addOverlay.onclick = function(e) { if (e.target === addOverlay) addOverlay.classList.add('hidden'); };
   }
 
   // ===== Clock =====
