@@ -629,6 +629,14 @@ body.has-wallpaper .section-title {
   font-size: 12px; font-weight: 600; color: var(--text-muted);
 }
 .shortcut-result-fav img[style*="display:none"] + .shortcut-result-letter { display: flex; }
+.shortcut-result-open {
+  flex-shrink: 0; color: var(--text-muted); background: transparent;
+  border: none; border-radius: 6px; width: 28px; height: 28px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s ease-out, color .15s ease-out;
+}
+.shortcut-result-open:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
+
 .shortcut-result-pin {
   flex-shrink: 0; color: var(--accent); background: var(--accent-bg);
   border: none; border-radius: 6px; width: 28px; height: 28px; cursor: pointer;
