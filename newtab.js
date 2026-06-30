@@ -158,16 +158,6 @@ const historyGrid = document.getElementById('historyGrid');
     if (!e.target.closest('.search-wrapper') && !e.target.closest('.suggest-dropdown')) searchInput.blur();
   });
 
-  // ===== Add Shortcut Dialog =====
-  var addBtn = document.getElementById('addShortcutBtn');
-  var addOverlay = document.getElementById('addShortcutOverlay');
-  var closeAddBtn = document.getElementById('closeAddShortcut');
-  if (addBtn && addOverlay) {
-    addBtn.onclick = function() { addOverlay.classList.remove('hidden'); };
-    if (closeAddBtn) closeAddBtn.onclick = function() { addOverlay.classList.add('hidden'); };
-    addOverlay.onclick = function(e) { if (e.target === addOverlay) addOverlay.classList.add('hidden'); };
-  }
-
   // ===== Clock =====
   function updateClockDisplay() {
     var now = new Date();
@@ -367,6 +357,18 @@ const historyGrid = document.getElementById('historyGrid');
       }
     }
   }, 100);
+})();
+
+// ===== Add Shortcut Dialog (outside init to avoid being skipped by init errors) =====
+(function() {
+  var addBtn = document.getElementById('addShortcutBtn');
+  var addOverlay = document.getElementById('addShortcutOverlay');
+  var closeAddBtn = document.getElementById('closeAddShortcut');
+  if (addBtn && addOverlay) {
+    addBtn.onclick = function() { addOverlay.classList.remove('hidden'); };
+    if (closeAddBtn) closeAddBtn.onclick = function() { addOverlay.classList.add('hidden'); };
+    addOverlay.onclick = function(e) { if (e.target === addOverlay) addOverlay.classList.add('hidden'); };
+  }
 })();
 
 // ===== Settings =====
