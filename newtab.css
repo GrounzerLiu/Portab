@@ -659,7 +659,8 @@ body.has-wallpaper .section-title-row {
 .shortcuts-section { margin-bottom: 20px; }
 .shortcuts-section.is-empty { margin-bottom: 8px; }
 .shortcuts-section.is-empty .section-title { margin-bottom: 4px; }
-.history-section  { margin-bottom: 32px; }
+.history-section { margin-bottom: 32px; }
+.history-section .section-title { margin-bottom: 12px; }
 
 /* ===== Grid ===== */
 .grid {
