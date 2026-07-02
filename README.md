@@ -10,7 +10,7 @@
 
 ## 预览
 
-<video src="screenshots/demo.mp4" controls width="100%"></video>
+https://github.com/user-attachments/assets/8694cf7d-e004-42be-a11d-2b497ca2ad47
 
 ## 安装
 
