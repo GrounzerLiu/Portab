@@ -48,10 +48,10 @@
     "message": "主题"
   },
   "themeDark": {
-    "message": "暗色"
+    "message": "深色"
   },
   "themeLight": {
-    "message": "亮色"
+    "message": "浅色"
   },
   "themeAuto": {
     "message": "跟随系统"
