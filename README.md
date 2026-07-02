@@ -6,17 +6,11 @@
 
 - **常用网站** — 按访问次数自动排列，支持固定到顶部区域
 - **壁纸** — 必应每日 / 随机 / 自定义图片，支持遮罩和模糊
-- **主题** — 暗色 / 亮色 / 跟随系统，自定义主题色，自动从壁纸取色
+- **主题** — 深色 / 浅色 / 跟随系统，自定义主题色，自动从壁纸取色
 
-## 截图
+## 预览
 
-![](screenshots/spotlight.jpg)
-
-![](screenshots/search.jpg)
-
-![](screenshots/main.jpg)
-
-![](screenshots/settings.jpg)
+<video src="screenshots/demo.mp4" controls width="100%"></video>
 
 ## 安装
 
